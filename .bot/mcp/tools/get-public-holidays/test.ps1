@@ -26,10 +26,30 @@ function Send-McpRequest {
     return $null
 }
 
-Write-Host "Test: Check holiday in Zurich, Switzerland on New Year's Day 2026" -ForegroundColor Yellow
+Write-Host "Test 1: Check holiday using place name - Mondeor" -ForegroundColor Yellow
 $response = Send-McpRequest -Process $Process -Request @{
     jsonrpc = '2.0'
     id = 1
+    method = 'tools/call'
+    params = @{
+        name = 'get_public_holidays'
+        arguments = @{
+            location = 'Mondeor'
+        }
+    }
+}
+
+if ($response.result) {
+    $result = $response.result.content[0].text | ConvertFrom-Json
+    Write-Host "✓ Result: isHoliday=$($result.isHoliday), country=$($result.country), coordinates=($($result.coordinates.latitude),$($result.coordinates.longitude))" -ForegroundColor Green
+} else {
+    Write-Host "✗ Test failed: $($response.error.message)" -ForegroundColor Red
+}
+
+Write-Host "`nTest 2: Check holiday using coordinates - Zurich on New Year's Day 2026" -ForegroundColor Yellow
+$response = Send-McpRequest -Process $Process -Request @{
+    jsonrpc = '2.0'
+    id = 2
     method = 'tools/call'
     params = @{
         name = 'get_public_holidays'
@@ -51,29 +71,7 @@ if ($response.result) {
     Write-Host "✗ Test failed: $($response.error.message)" -ForegroundColor Red
 }
 
-Write-Host "`nTest: Check non-holiday in New York, USA" -ForegroundColor Yellow
-$response = Send-McpRequest -Process $Process -Request @{
-    jsonrpc = '2.0'
-    id = 2
-    method = 'tools/call'
-    params = @{
-        name = 'get_public_holidays'
-        arguments = @{
-            latitude = 40.7128
-            longitude = -74.0060
-            date = '2026-03-15'
-        }
-    }
-}
-
-if ($response.result) {
-    $result = $response.result.content[0].text | ConvertFrom-Json
-    Write-Host "✓ Result: isHoliday=$($result.isHoliday), country=$($result.country)" -ForegroundColor Green
-} else {
-    Write-Host "✗ Test failed: $($response.error.message)" -ForegroundColor Red
-}
-
-Write-Host "`nTest: Check today's date in London, UK" -ForegroundColor Yellow
+Write-Host "`nTest 3: Check holiday using place name - Paris on Bastille Day" -ForegroundColor Yellow
 $response = Send-McpRequest -Process $Process -Request @{
     jsonrpc = '2.0'
     id = 3
@@ -81,15 +79,18 @@ $response = Send-McpRequest -Process $Process -Request @{
     params = @{
         name = 'get_public_holidays'
         arguments = @{
-            latitude = 51.5074
-            longitude = -0.1278
+            location = 'Paris, France'
+            date = '2026-07-14'
         }
     }
 }
 
 if ($response.result) {
     $result = $response.result.content[0].text | ConvertFrom-Json
-    Write-Host "✓ Result: isHoliday=$($result.isHoliday), date=$($result.date), country=$($result.country)" -ForegroundColor Green
+    Write-Host "✓ Result: isHoliday=$($result.isHoliday), country=$($result.country), holiday=$($result.holidays.name)" -ForegroundColor Green
+    if ($result.isHoliday) {
+        Write-Host "  Holiday: $($result.holidays.name)" -ForegroundColor Cyan
+    }
 } else {
     Write-Host "✗ Test failed: $($response.error.message)" -ForegroundColor Red
 }

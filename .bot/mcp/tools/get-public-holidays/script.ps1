@@ -4,21 +4,29 @@ function Invoke-GetPublicHolidays {
     )
     
     # Extract arguments
+    $location = $Arguments['location']
     $latitude = $Arguments['latitude']
     $longitude = $Arguments['longitude']
     $date = $Arguments['date']
     
-    # Validate coordinates
-    if ($null -eq $latitude -or $null -eq $longitude) {
-        throw "Both latitude and longitude are required"
+    # Determine if we need to geocode a place name or use coordinates
+    if ($location) {
+        # Use place name - will geocode to get coordinates
+        $useLocationName = $true
     }
-    
-    if ($latitude -lt -90 -or $latitude -gt 90) {
-        throw "Latitude must be between -90 and 90"
+    elseif ($null -ne $latitude -and $null -ne $longitude) {
+        # Validate coordinates
+        if ($latitude -lt -90 -or $latitude -gt 90) {
+            throw "Latitude must be between -90 and 90"
+        }
+        
+        if ($longitude -lt -180 -or $longitude -gt 180) {
+            throw "Longitude must be between -180 and 180"
+        }
+        $useLocationName = $false
     }
-    
-    if ($longitude -lt -180 -or $longitude -gt 180) {
-        throw "Longitude must be between -180 and 180"
+    else {
+        throw "Either 'location' (place name) or both 'latitude' and 'longitude' are required"
     }
     
     # Parse date or use today
@@ -51,8 +59,16 @@ function Invoke-GetPublicHolidays {
         throw "Google Maps API key not configured. Please set GOOGLE_MAPS_API_KEY in .env file (see .env.example)"
     }
     
-    # Call Google Geocoding API to get country code
-    $geoUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}"
+    # Geocode location to get coordinates and country
+    if ($useLocationName) {
+        # Geocode place name to coordinates
+        $encodedLocation = [System.Web.HttpUtility]::UrlEncode($location)
+        $geoUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${apiKey}"
+    }
+    else {
+        # Reverse geocode coordinates to country
+        $geoUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}"
+    }
     
     try {
         $geoResponse = Invoke-RestMethod -Uri $geoUrl -Method Get
@@ -61,11 +77,17 @@ function Invoke-GetPublicHolidays {
             throw "Google Geocoding API error: $($geoResponse.status)"
         }
         
-        # Extract country code from address components
+        # Extract country code and coordinates from address components
         $countryCode = $null
         $countryName = $null
         
         foreach ($result in $geoResponse.results) {
+            # If using location name, extract coordinates from first result
+            if ($useLocationName -and $null -eq $latitude) {
+                $latitude = $result.geometry.location.lat
+                $longitude = $result.geometry.location.lng
+            }
+            
             foreach ($component in $result.address_components) {
                 if ($component.types -contains 'country') {
                     $countryCode = $component.short_name
