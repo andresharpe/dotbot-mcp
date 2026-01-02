@@ -98,7 +98,7 @@ Each tool is self-contained with:
 ```json
 {
   "mcpServers": {
-    "powershell-date": {
+    "dotbot-mcp": {
       "command": "pwsh",
       "args": [
         "-NoProfile",

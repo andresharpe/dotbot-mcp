@@ -53,7 +53,7 @@ Open the config file and add the server configuration. If the file doesn't exist
 ```json
 {
   "mcpServers": {
-    "powershell-date": {
+    "dotbot-mcp": {
       "command": "pwsh",
       "args": [
         "-NoProfile",

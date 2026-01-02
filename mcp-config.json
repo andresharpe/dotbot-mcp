@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "powershell-date": {
+    "dotbot-mcp": {
       "command": "pwsh",
       "args": [
         "-NoProfile",
