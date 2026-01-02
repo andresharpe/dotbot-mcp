@@ -267,6 +267,40 @@ function Install-MCP {
     }
 }
 
+function Test-MCPInstallation {
+    param([string]$ProjectDir)
+    
+    $mcpServer = Join-Path $ProjectDir ".bot\mcp\dotbot-mcp.ps1"
+    $mcpMetadata = Join-Path $ProjectDir ".bot\mcp\metadata.yaml"
+    $mcpHelpers = Join-Path $ProjectDir ".bot\mcp\dotbot-mcp-helpers.ps1"
+    
+    $issues = @()
+    
+    if (-not (Test-Path $mcpServer)) {
+        $issues += "MCP server script missing"
+    }
+    if (-not (Test-Path $mcpMetadata)) {
+        $issues += "MCP metadata missing"
+    }
+    if (-not (Test-Path $mcpHelpers)) {
+        $issues += "MCP helpers missing"
+    }
+    
+    $toolsDir = Join-Path $ProjectDir ".bot\mcp\tools"
+    if (Test-Path $toolsDir) {
+        $toolCount = (Get-ChildItem $toolsDir -Directory -ErrorAction SilentlyContinue).Count
+        Write-VerboseLog "Found $toolCount MCP tools"
+    }
+    
+    if ($issues.Count -gt 0) {
+        Write-Warning "MCP installation issues:"
+        $issues | ForEach-Object { Write-Warning "  - $_" }
+        return $false
+    }
+    
+    return $true
+}
+
 function Show-MCPConfiguration {
     $mcpServerPath = Join-Path $ProjectDir ".bot\mcp\dotbot-mcp.ps1"
     
@@ -508,6 +542,15 @@ Install-Agents
 Install-Workflows
 Install-Commands
 Install-MCP
+
+# Verify MCP installation
+if (-not $DryRun) {
+    $mcpHealthy = Test-MCPInstallation -ProjectDir $ProjectDir
+    if (-not $mcpHealthy) {
+        Write-Warning "MCP server may not function correctly"
+    }
+}
+
 Install-WarpWorkflowShims
 
 # Create state file
