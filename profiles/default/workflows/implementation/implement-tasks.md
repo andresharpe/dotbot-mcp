@@ -123,6 +123,28 @@ Once verified:
 - Note any follow-up tasks
 - Communicate completion to team
 
+### 9. Comprehensive Verification (Optional)
+
+Offer the user a thorough quality check:
+
+```
+Implementation complete!
+
+Would you like me to run a comprehensive verification? This will:
+- Verify all acceptance criteria are met
+- Run full test suite and check coverage
+- Validate standards compliance
+- Check code quality (no debug code, performance issues, security)
+- Verify documentation completeness
+- Check for breaking changes or regressions
+
+Type 'verify' to run full verification, or 'skip' to finish.
+```
+
+**If user chooses 'verify':** Follow `.bot/workflows/implementation/verify-implementation.md`
+
+**If user chooses 'skip':** Proceed to output
+
 ## Best Practices
 
 ### Stay Focused

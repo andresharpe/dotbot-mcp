@@ -7,6 +7,7 @@ category: specification
 agent: spec-writer
 workflows:
   - specification/write-spec
+  - specification/verify-spec
 standards:
   - global/coding-style
   - global/error-handling

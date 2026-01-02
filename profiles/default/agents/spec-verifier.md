@@ -10,6 +10,8 @@ capabilities:
   - reusability_validation
   - test_limit_verification
 used_by:
+  - commands/write-spec
+  - workflows/specification/write-spec
   - workflows/specification/verify-spec
 ---
 

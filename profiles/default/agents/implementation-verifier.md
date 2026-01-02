@@ -9,6 +9,8 @@ capabilities:
   - test_suite_execution
   - verification_reporting
 used_by:
+  - commands/implement-tasks
+  - workflows/implementation/implement-tasks
   - workflows/implementation/verify-implementation
 ---
 

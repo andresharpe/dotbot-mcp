@@ -7,6 +7,7 @@ category: implementation
 agent: implementer
 workflows:
   - implementation/implement-tasks
+  - implementation/verify-implementation
 standards:
   - global/coding-style
   - global/error-handling

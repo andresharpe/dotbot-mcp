@@ -168,6 +168,28 @@ Document potential risks and mitigation strategies:
 - Iterate on design
 - Get approval before implementation
 
+### 10. Verification (Optional)
+
+Offer the user a thorough quality check:
+
+```
+Spec writing complete!
+
+Would you like me to run a thorough verification check? This will:
+- Verify requirements accuracy against original Q&A
+- Check structural integrity of spec files
+- Analyze visual alignment (if visuals exist)
+- Validate reusability opportunities are leveraged
+- Verify test writing limits (2-8 tests per task group)
+- Generate a detailed verification report
+
+Type 'verify' to run verification, or 'skip' to finish.
+```
+
+**If user chooses 'verify':** Follow `.bot/workflows/specification/verify-spec.md`
+
+**If user chooses 'skip':** Proceed to output
+
 ## Output
 
 A complete, detailed specification document that:
