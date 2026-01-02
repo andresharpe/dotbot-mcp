@@ -11,6 +11,12 @@ This document provides comprehensive documentation for all MCP tools provided by
   - [solution.project.register](#solutionprojectregister)
   - [solution.project.update](#solutionprojectupdate)
   - [solution.health.check](#solutionhealthcheck)
+- [State Management Tools](#state-management-tools)
+  - [state.set](#stateset)
+  - [state.get](#stateget)
+  - [state.advance](#stateadvance)
+  - [state.reset](#statereset)
+  - [state.history](#statehistory)
 - [Date & Time Tools](#date--time-tools)
 
 ---
@@ -659,6 +665,324 @@ if (health.status === 'warning') {
 
 ---
 
+## State Management Tools
+
+State Management Tools provide deterministic, repo-native tracking of feature development progression. These tools coordinate **intent, scope, and progression** while remaining separate from workflows, agents, and standards.
+
+### Key Concepts
+
+**State**: Current development context tracked in `.bot/state/state.json`
+
+**History**: Append-only audit trail in `.bot/state/history.ndjson`
+
+**Deterministic**: State is ONLY changed by explicit tool calls, never inferred from git/filesystem
+
+**Integration Layer**: State tools track *what* and *where* you are, not *how* to do the work
+
+📘 **For complete state management guide, see [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md)**
+
+---
+
+### state.set
+
+Initialize or update state fields with validation and history tracking.
+
+#### Input Schema
+```json
+{
+  "patch": {
+    "current_feature": "user-authentication",
+    "phase": "implement",
+    "current_task_id": "AUTH-003"
+  },
+  "reason": "Starting implementation phase",
+  "correlation_id": "optional-request-id",
+  "skip_validation": false
+}
+```
+
+#### Output Example
+```json
+{
+  "changed": true,
+  "state": {
+    "current_feature": "user-authentication",
+    "phase": "implement",
+    "current_task_id": "AUTH-003",
+    "updated_at": "2026-01-02T15:30:00Z"
+  },
+  "diff": {
+    "phase": {"from": "spec", "to": "implement"}
+  }
+}
+```
+
+#### Usage Examples
+```typescript
+// Initialize new feature state
+const result = await callTool('state_set', {
+  patch: {
+    current_feature: 'user-auth',
+    phase: 'spec',
+    current_task_id: 'AUTH-001'
+  },
+  reason: 'Starting authentication feature'
+});
+
+// Update single field
+await callTool('state_set', {
+  patch: { last_commit: 'a1b2c3d' },
+  reason: 'Committed changes'
+});
+```
+
+---
+
+### state.get
+
+Retrieve current state snapshot with optional history.
+
+#### Input Schema
+```json
+{
+  "include_history": true,
+  "history_limit": 10
+}
+```
+
+#### Output Example
+```json
+{
+  "state": {
+    "current_feature": "user-authentication",
+    "phase": "implement",
+    "current_task_id": "AUTH-003",
+    "updated_at": "2026-01-02T15:30:00Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-01-02T15:20:00Z",
+      "type": "state_advance",
+      "diff": {"phase": {"from": "spec", "to": "implement"}}
+    }
+  ],
+  "summary": "Active feature: user-authentication, phase: implement, task: AUTH-003"
+}
+```
+
+#### Usage Examples
+```typescript
+// Get current state
+const state = await callTool('state_get', {});
+console.log(`Working on: ${state.state.current_feature}`);
+
+// Get state with recent history
+const withHistory = await callTool('state_get', {
+  include_history: true,
+  history_limit: 5
+});
+```
+
+---
+
+### state.advance
+
+Advance to next task or phase (deterministic only, no inference).
+
+#### Input Schema (Task)
+```json
+{
+  "target": "next-task",
+  "next_task_id": "AUTH-004",
+  "reason": "Completed AUTH-003"
+}
+```
+
+#### Input Schema (Phase)
+```json
+{
+  "target": "next-phase",
+  "next_phase": "verify",
+  "reason": "Implementation complete"
+}
+```
+
+#### Output Example
+```json
+{
+  "changed": true,
+  "advance_type": "task",
+  "state": { /* updated state */ },
+  "diff": {
+    "current_task_id": {"from": "AUTH-003", "to": "AUTH-004"}
+  }
+}
+```
+
+#### Usage Examples
+```typescript
+// Advance to next task
+await callTool('state_advance', {
+  target: 'next-task',
+  next_task_id: 'AUTH-004',
+  reason: 'Completed AUTH-003'
+});
+
+// Advance to next phase
+await callTool('state_advance', {
+  target: 'next-phase',
+  next_phase: 'implement',
+  reason: 'Spec complete'
+});
+```
+
+---
+
+### state.reset
+
+Reset state with confirmation gate and scoped operations.
+
+#### Input Schema
+```json
+{
+  "scope": "task",
+  "confirm": true,
+  "reason": "Task complete, clearing for next"
+}
+```
+
+#### Scopes
+- `all` - Reset everything to defaults
+- `feature` - Reset current_feature, phase, task
+- `phase` - Reset phase and task only
+- `task` - Reset current_task_id only
+
+#### Output Example
+```json
+{
+  "changed": true,
+  "scope": "task",
+  "state": { /* updated state */ },
+  "diff": {
+    "current_task_id": {"from": "AUTH-003", "to": null}
+  }
+}
+```
+
+#### Usage Examples
+```typescript
+// Reset task (requires confirmation)
+await callTool('state_reset', {
+  scope: 'task',
+  confirm: true,
+  reason: 'Task complete'
+});
+
+// Full reset
+await callTool('state_reset', {
+  scope: 'all',
+  confirm: true,
+  reason: 'Feature complete, starting fresh'
+});
+```
+
+---
+
+### state.history
+
+Query state history with filtering and defensive parsing.
+
+#### Input Schema
+```json
+{
+  "limit": 50,
+  "since": "2026-01-02T00:00:00Z",
+  "types": ["state_advance", "state_reset"],
+  "feature": "user-authentication"
+}
+```
+
+#### Output Example
+```json
+{
+  "events": [
+    {
+      "timestamp": "2026-01-02T15:30:00Z",
+      "type": "state_advance",
+      "advance_type": "task",
+      "reason": "Task completed",
+      "diff": {"current_task_id": {"from": "AUTH-003", "to": "AUTH-004"}}
+    }
+  ],
+  "count": 15,
+  "limit": 50
+}
+```
+
+#### Usage Examples
+```typescript
+// Query recent history
+const history = await callTool('state_history', {
+  limit: 20
+});
+
+// Query specific event types
+const advances = await callTool('state_history', {
+  types: ['state_advance'],
+  limit: 50
+});
+
+// Query for specific feature
+const featureHistory = await callTool('state_history', {
+  feature: 'user-auth',
+  since: '2026-01-01T00:00:00Z'
+});
+```
+
+---
+
+### State Management Workflow
+
+```typescript
+// 1. Start new feature
+await callTool('state_set', {
+  patch: {
+    current_feature: 'api-v2',
+    phase: 'spec',
+    current_task_id: 'API-001'
+  },
+  reason: 'Starting API v2'
+});
+
+// 2. Advance through phases
+await callTool('state_advance', {
+  target: 'next-phase',
+  next_phase: 'implement',
+  reason: 'Spec complete'
+});
+
+// 3. Work through tasks
+await callTool('state_advance', {
+  target: 'next-task',
+  next_task_id: 'API-002',
+  reason: 'Completed API-001'
+});
+
+// 4. Reset when done
+await callTool('state_reset', {
+  scope: 'feature',
+  confirm: true,
+  reason: 'Feature deployed'
+});
+
+// 5. Review audit trail
+const audit = await callTool('state_history', {
+  feature: 'api-v2'
+});
+```
+
+---
+
 ## Date & Time Tools
 
 Documentation for date/time tools available separately.
@@ -666,6 +990,8 @@ Documentation for date/time tools available separately.
 ---
 
 ## See Also
+- [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md) - Complete state management guide
+- [ENVELOPE-RESPONSE-STANDARD.md](./ENVELOPE-RESPONSE-STANDARD.md) - Response format standard
 - [FRONTMATTER-SPEC.md](./FRONTMATTER-SPEC.md) - YAML frontmatter standard for dotbot artifacts
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture and design decisions
 - [README.md](./README.md) - Project overview and getting started

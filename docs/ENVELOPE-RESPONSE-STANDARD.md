@@ -228,6 +228,17 @@ Standard error codes used across all dotbot tools:
 ### Validation Errors
 - **`CIRCULAR_DEPENDENCY`**: Circular file references detected
 - **`INVALID_PARAMETER`**: Required parameter missing or invalid type
+- **`INVALID_STATE`**: State validation failed (invalid field values)
+
+### State Management Errors
+- **`STATE_NOT_INITIALIZED`**: State file does not exist (use state-set to initialize)
+- **`STATE_ALREADY_EXISTS`**: State file already exists (cannot re-initialize)
+- **`INVALID_PHASE`**: Phase value not in allowed set (spec, tasks, implement, verify, deploy)
+- **`INVALID_TASK_ID`**: Task ID format invalid (must match ^[A-Z0-9-]+$)
+- **`PHASE_ORDER_MISSING`**: Cannot determine next phase (phase-order.json not found or invalid)
+- **`TASK_NOT_FOUND`**: Specified task ID not found in current state
+- **`CONFIRMATION_REQUIRED`**: Destructive operation requires confirm=true and reason
+- **`HISTORY_FILE_INVALID`**: Failed to read or parse history.ndjson
 
 ### System Errors
 - **`IO_ERROR`**: File system operation failed
