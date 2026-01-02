@@ -1,0 +1,17 @@
+name: solution_standards_list
+description: Lists coding standards with optional filtering by domain or current context
+inputSchema:
+  type: object
+  properties:
+    domain:
+      type: string
+      enum: [all, global, backend, frontend, testing, security, deployment]
+      description: Filter standards by domain
+      default: all
+    include_summaries:
+      type: boolean
+      description: Include brief summary of each standard
+      default: true
+    applicable_to:
+      type: string
+      description: 'Filter to standards applicable to specific project alias (e.g., "fe", "be", "psx")'

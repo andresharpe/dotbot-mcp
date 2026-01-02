@@ -1,0 +1,13 @@
+name: solution_info
+description: Returns solution-level information including product mission, vision, and high-level architecture
+inputSchema:
+  type: object
+  properties:
+    include_mission:
+      type: boolean
+      description: Include product mission and vision
+      default: true
+    include_roadmap:
+      type: boolean
+      description: Include product roadmap summary
+      default: false

@@ -1,0 +1,18 @@
+name: solution_tech_stack
+description: Returns detailed tech stack information from .bot/product/tech-stack.md
+inputSchema:
+  type: object
+  properties:
+    category:
+      type: string
+      enum: [all, backend, frontend, database, testing, deployment, ai, security]
+      description: Filter by technology category
+      default: all
+    include_versions:
+      type: boolean
+      description: Include specific version numbers
+      default: true
+    include_rationale:
+      type: boolean
+      description: Include rationale for technology choices
+      default: false

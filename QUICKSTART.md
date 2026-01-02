@@ -1,157 +1,317 @@
-# Quick Start Guide
+# Quick Start Guide - dotbot v2.0
 
-## Testing the Server Locally
+Get up and running with dotbot in 5 minutes. This guide covers global installation, project setup, MCP server connection, and your first workflow execution.
 
-View example usage patterns:
+## What You'll Get
+
+After following this guide:
+- ✅ **Global CLI** - `dotbot` command available everywhere
+- ✅ **Project Setup** - `.bot/` with agents, workflows, standards, MCP server
+- ✅ **MCP Integration** - AI agent connected to orchestration tools
+- ✅ **Ready to Code** - Structured development workflows at your fingertips
+
+## Prerequisites
+
+- PowerShell 7.0+ (check: `pwsh --version`)
+- Git (for version control features)
+- A project directory (or create one)
+
+## Step 1: Global Installation
 
 ```powershell
-.\examples.ps1
+# Clone dotbot to temporary location
+git clone https://github.com/[user]/dotbot-mcp ~/dotbot-temp
+cd ~/dotbot-temp
+
+# Run installer (cross-platform)
+pwsh init.ps1
 ```
 
-Run individual tool tests:
+The installer will:
+- Copy dotbot to `~/dotbot`
+- Add `~/dotbot/bin` to your PATH
+- Make `dotbot` command globally available
+
+**Verify installation:**
+```powershell
+dotbot status
+# Should show: dotbot v2.0.0 installed
+
+dotbot help
+# Shows available commands
+```
+
+## Step 2: Initialize a Project
+
+Navigate to your project and initialize dotbot:
 
 ```powershell
-# Start the server
-$process = Start-Process pwsh -ArgumentList @(
-    '-NoProfile',
-    '-ExecutionPolicy', 'Bypass',
-    '-File', '.bot\mcp\dotbot-mcp.ps1'
-) -NoNewWindow -PassThru -RedirectStandardInput stdin.txt -RedirectStandardOutput stdout.txt -RedirectStandardError stderr.txt
+cd ~/my-project
 
-# Run a tool test
-. .bot\mcp\tools\get-current-datetime\test.ps1 -Process $process
+# Initialize with default profile
+dotbot init
 
-# Clean up
-$process | Stop-Process
+# Or use a specific profile (e.g., dotnet, python)
+dotbot init --profile dotnet
 ```
 
-## Setting up with Claude Desktop
-
-### Step 1: Locate Claude Desktop Config
-
-Find your Claude Desktop configuration file:
-
-**Windows:**
+This creates:
 ```
-%APPDATA%\Claude\claude_desktop_config.json
-```
+.bot/
+├── agents/           # 8 specialized AI personas
+├── standards/        # Coding standards and best practices
+├── workflows/        # 17 development workflows
+├── commands/         # Warp command templates
+├── mcp/              # MCP orchestration server
+└── .dotbot-state.json
 
-**macOS:**
-```
-~/Library/Application Support/Claude/claude_desktop_config.json
+.warp/
+└── workflows/        # Warp workflow integrations
 ```
 
-**Linux:**
+## Step 3: Connect MCP Server
+
+### Option A: Warp (Recommended)
+
+1. Open Warp Settings → Features → MCP Servers
+2. Click "Add Server"
+3. Configure:
+   - **Name:** `dotbot`
+   - **Command:** `pwsh`
+   - **Args:**
+     ```json
+     [
+       "-NoProfile",
+       "-ExecutionPolicy", "Bypass",
+       "-File",
+       "/absolute/path/to/your-project/.bot/mcp/dotbot-mcp.ps1"
+     ]
+     ```
+
+**Windows path example:** `C:\\Users\\andre\\projects\\my-app\\.bot\\mcp\\dotbot-mcp.ps1`
+
+**macOS/Linux path example:** `/Users/andre/projects/my-app/.bot/mcp/dotbot-mcp.ps1`
+
+4. Save and verify connection
+
+### Option B: Claude Desktop
+
+1. Locate config file:
+   - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+2. Add server configuration:
+   ```json
+   {
+     "mcpServers": {
+       "dotbot": {
+         "command": "pwsh",
+         "args": [
+           "-NoProfile",
+           "-ExecutionPolicy", "Bypass",
+           "-File",
+           "/absolute/path/to/your-project/.bot/mcp/dotbot-mcp.ps1"
+         ]
+       }
+     }
+   }
+   ```
+
+3. Restart Claude Desktop
+
+## Step 4: Verify MCP Connection
+
+Test the MCP server is working:
+
+**In Warp or Claude, try:**
+- "What MCP tools are available?"
+- "What's the current date and time?" (uses example date/time tools)
+
+**Manual test (optional):**
+```powershell
+# Start server
+cd ~/my-project
+pwsh -NoProfile -ExecutionPolicy Bypass -File .bot/mcp/dotbot-mcp.ps1
+
+# In another terminal, send JSON-RPC request
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | pwsh -Command "$input | pwsh -NoProfile -File .bot/mcp/dotbot-mcp.ps1"
 ```
-~/.config/Claude/claude_desktop_config.json
-```
 
-### Step 2: Edit Configuration
+Press Ctrl+C to stop the server.
 
-Open the config file and add the server configuration. If the file doesn't exist, create it with:
+## Step 5: Understanding the System
 
-```json
-{
-  "mcpServers": {
-    "dotbot-mcp": {
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "/absolute/path/to/dotbot-mcp/.bot/mcp/dotbot-mcp.ps1"
-      ]
-    }
-  }
-}
-```
+### Orchestration vs Execution
 
-**Note:** Replace with your actual installation path. On Windows, use double backslashes: `C:\\Users\\username\\repos\\dotbot-mcp\\.bot\\mcp\\dotbot-mcp.ps1`
+**Orchestration Layer (MCP Server):**
+- Tracks project state (feature, phase, task)
+- Determines "what to do next"
+- Provides structured tools: `state.get`, `task.next`, `feature.start`
+- Eliminates context confusion
 
-### Step 3: Restart Claude Desktop
+**Execution Layer (Workflows + Agents + Standards):**
+- **Workflows** - Step-by-step guides (`.bot/workflows/`)
+- **Agents** - Specialized personas (`.bot/agents/`)
+- **Standards** - Quality guardrails (`.bot/standards/`)
+- Provides "how to do it"
 
-Close and restart Claude Desktop for the changes to take effect.
+### Your First Workflow
 
-### Step 4: Verify Connection
+Let's walk through adding a feature:
 
-In Claude Desktop, you should now see the MCP server connected. Try asking:
+1. **Plan the product** (if first time):
+   ```markdown
+   # AI agent reads workflow
+   .bot/workflows/planning/gather-product-info.md
+   
+   # Follows steps:
+   - Research product context
+   - Define user problems
+   - Create PRODUCT-MISSION.md
+   ```
 
-- "What's the current date and time in UTC?"
-- "How many days until December 31, 2026?"
-- "Convert 2026-01-15 to US date format"
-- "What's 45 days from today?"
+2. **Start a feature:**
+   ```markdown
+   # Future: AI agent calls MCP tool
+   feature.start({ name: "User Authentication" })
+   
+   # Creates:
+   - Feature tracking state
+   - Git branch
+   - Feature directory
+   ```
 
-## Available Tools
+3. **Research specification:**
+   ```markdown
+   # AI agent gets next intent
+   intent.next() → "research-spec"
+   
+   # Follows workflow (embedded in response)
+   - Research requirements
+   - Identify constraints
+   - Scope boundaries
+   ```
 
-1. **get_current_datetime** - Get current date/time with formatting and timezone support
-2. **add_to_date** - Add or subtract time from dates
-3. **get_date_difference** - Calculate difference between two dates
-4. **format_date** - Convert dates between formats
-5. **parse_timestamp** - Convert Unix timestamps to readable dates
-6. **get_timezones** - List all available system timezones
+4. **Write specification:**
+   ```markdown
+   # AI agent moves to specify phase
+   state.set({ phase: "specify" })
+   
+   # Follows workflow
+   .bot/workflows/specification/write-spec.md
+   ```
 
-## Date Format Reference
+5. **Implement tasks:**
+   ```markdown
+   # AI agent gets next task
+   task.next() → { id: "auth-001", description: "...", spec_excerpts: [...] }
+   
+   # Implements following standards
+   .bot/standards/backend/
+   .bot/standards/testing/
+   
+   # Marks complete
+   task.complete({ commit: "abc123" })
+   ```
 
-Common format patterns:
+**Note:** Phase 3 MCP tools (state, task, feature management) are planned. Currently includes example date/time tools to demonstrate architecture.
 
-| Pattern | Example | Description |
-|---------|---------|-------------|
-| `yyyy-MM-dd` | 2026-01-15 | ISO date |
-| `MM/dd/yyyy` | 01/15/2026 | US format |
-| `dd/MM/yyyy` | 15/01/2026 | UK format |
-| `yyyy-MM-dd HH:mm:ss` | 2026-01-15 14:30:00 | ISO datetime |
-| `dddd, MMMM dd, yyyy` | Wednesday, January 15, 2026 | Long format |
-| `MMM dd, yyyy` | Jan 15, 2026 | Medium format |
-| `HH:mm:ss` | 14:30:00 | Time only |
-| `o` | 2026-01-15T14:30:00.0000000 | ISO 8601 |
+## Available MCP Tools (Current)
+
+Example tools included to demonstrate MCP architecture:
+
+1. **get_current_datetime** - Current date/time with timezone support
+2. **add_to_date** - Date arithmetic
+3. **get_date_difference** - Time spans between dates
+4. **format_date** - Convert date formats
+5. **parse_timestamp** - Unix timestamp conversion
+6. **get_timezones** - List system timezones
+7. **get_public_holidays** - Holiday checking (requires API key)
+8. **get_current_time_at** - Time at location (requires API key)
 
 ## Troubleshooting
 
-### Server not showing in Claude Desktop
-
-1. Check that PowerShell 7+ is installed: `pwsh --version`
-2. Verify the path in `claude_desktop_config.json` is correct and points to `.bot/mcp/dotbot-mcp.ps1`
-3. Check Claude Desktop logs for error messages
-4. Try running the server manually to see if there are errors:
-   ```powershell
-   pwsh -NoProfile -ExecutionPolicy Bypass -File .bot/mcp/dotbot-mcp.ps1
-   ```
-
-### Tool execution errors
-
-1. Check date format strings are valid .NET format strings
-2. Ensure dates are in a parseable format (prefer ISO 8601)
-3. For timezone issues, use `get_timezones` to list valid IDs
-
-### Interactive Testing
-
-Start the server manually and send JSON-RPC requests:
+### dotbot command not found
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .bot/mcp/dotbot-mcp.ps1
+# Verify installation
+ls ~/dotbot
+
+# Re-run installer
+cd ~/dotbot-temp
+pwsh init.ps1
+
+# Check PATH (should include ~/dotbot/bin)
+$env:PATH -split (';')
 ```
 
-Then type JSON-RPC requests (one per line):
+### MCP Server Not Connecting
 
-```json
-{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}
-{"jsonrpc":"2.0","id":2,"method":"tools/list"}
-{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"get_current_datetime","arguments":{"utc":true}}}
+1. **Check PowerShell version:** `pwsh --version` (need 7.0+)
+2. **Verify path is absolute** and points to `.bot/mcp/dotbot-mcp.ps1`
+3. **Test server manually:**
+   ```powershell
+   pwsh -NoProfile -ExecutionPolicy Bypass -File .bot/mcp/dotbot-mcp.ps1
+   # Should start without errors
+   ```
+4. **Check client logs:**
+   - Warp: Settings → Developer → Logs
+   - Claude: Help → View Logs
+
+### Project Installation Issues
+
+```powershell
+# Check if git repo
+git status
+
+# Re-initialize
+dotbot remove-project
+dotbot init
+
+# Check state file
+cat .bot/.dotbot-state.json
 ```
-
-Press Ctrl+C to exit.
 
 ## Next Steps
 
-- Review `examples.ps1` for usage patterns
-- Check `README.md` for detailed documentation
-- See `.bot/mcp/README-NEWTOOL.md` for instructions on adding new tools
-- Explore the modular tool structure in `.bot/mcp/tools/`
+### Explore the System
+```powershell
+# View workflows
+ls .bot/workflows/
 
-## Support
+# Read an agent persona
+cat .bot/agents/implementer.md
 
-For issues or questions, check:
-- The test script output for diagnostics
-- PowerShell error messages in stderr
-- Claude Desktop MCP server logs
+# Check standards
+ls .bot/standards/
+```
+
+### Customize Your Installation
+```powershell
+# Update to latest
+dotbot update
+
+# Use different profile
+dotbot init --profile dotnet
+
+# Check current status
+dotbot status
+```
+
+### Learn More
+- **[README.md](README.md)** - Complete documentation
+- **[MIGRATION.md](MIGRATION.md)** - Upgrading from dotbot v1.x
+- **[WARP.md](WARP.md)** - Architecture and AI guidelines
+- **[profiles/default/mcp/README-NEWTOOL.md](profiles/default/mcp/README-NEWTOOL.md)** - Creating MCP tools
+
+## What's Next?
+
+You're ready to start structured AI-driven development:
+
+1. **Start with planning** - Let AI agent gather product info
+2. **Define features** - Use specification workflows
+3. **Implement systematically** - Follow task workflows with standards
+4. **Track everything** - MCP tools maintain state (Phase 3)
+
+**Welcome to disciplined AI development!** 🎉

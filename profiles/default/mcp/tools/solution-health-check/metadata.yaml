@@ -1,0 +1,14 @@
+name: solution_health_check
+description: Validates dotbot installation and solution structure, reports any issues
+inputSchema:
+  type: object
+  properties:
+    check_level:
+      type: string
+      enum: [basic, standard, comprehensive]
+      description: Level of health checks to perform
+      default: standard
+    include_recommendations:
+      type: boolean
+      description: Include recommendations for improvements
+      default: true

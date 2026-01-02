@@ -1,0 +1,30 @@
+version: 2.0.0
+base_install: true
+
+# CONFIGURATION
+# Configure defaults for dotbot project installation.
+
+# ================================================
+# MCP ORCHESTRATION
+# MCP server provides orchestration layer for intent and state management
+# ================================================
+mcp_enabled: true
+mcp_protocol_version: "2024-11-05"
+
+# ================================================
+# STANDARDS
+# Should standards be provided as Warp Project Rules?
+# Set to true to add standards as project rules in WARP.md
+# Set to false to reference standards as separate files
+#
+# Override this default when running project-install.ps1 by using the flag -StandardsAsWarpRules $true/$false
+# ================================================
+standards_as_warp_rules: true
+
+# ================================================
+# PROFILE
+# Use this profile by default.
+#
+# Override this default when running project-install.ps1 by using the flag -Profile [profile-name]
+# ================================================
+profile: default
