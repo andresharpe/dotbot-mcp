@@ -16,7 +16,7 @@ function Invoke-SolutionHealthCheck {
         if (-not $solutionRoot) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.health.check" `
+                -Tool "solution-health-check" `
                 -Version "1.0.0" `
                 -Summary "Health check failed: not in a dotbot solution directory." `
                 -Data @{} `
@@ -228,7 +228,7 @@ function Invoke-SolutionHealthCheck {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.health.check" `
+            -Tool "solution-health-check" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $data `

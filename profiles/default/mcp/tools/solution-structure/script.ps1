@@ -16,7 +16,7 @@ function Invoke-SolutionStructure {
         if (-not $solutionRoot) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.structure" `
+                -Tool "solution-structure" `
                 -Version "1.0.0" `
                 -Summary "Failed to discover solution structure: not in a dotbot directory." `
                 -Data @{} `
@@ -168,7 +168,7 @@ function Invoke-SolutionStructure {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.structure" `
+            -Tool "solution-structure" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $data `

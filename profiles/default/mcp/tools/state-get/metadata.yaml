@@ -1,0 +1,17 @@
+name: state_get
+description: Return current authoritative state snapshot
+inputSchema:
+  type: object
+  properties:
+    include_history:
+      type: boolean
+      description: Include recent state events
+      default: false
+    history_limit:
+      type: integer
+      description: Number of history events to return
+      default: 20
+    include_files:
+      type: boolean
+      description: Include paths to state files
+      default: true

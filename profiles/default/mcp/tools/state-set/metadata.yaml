@@ -1,0 +1,25 @@
+name: state_set
+description: Set or patch specific state fields with validation
+inputSchema:
+  type: object
+  properties:
+    patch:
+      type: object
+      description: |
+        State fields to set/update. Only specified fields will be modified.
+        Valid fields: current_feature, phase, phase_index, current_task_id, 
+        active_branch, worktree_path, last_commit, notes, locks.
+        Phase must be one of: spec, tasks, implement, verify, deploy.
+      required: true
+    correlation_id:
+      type: string
+      description: Optional correlation ID for orchestration chains
+    reason:
+      type: string
+      description: Optional reason for the state change
+    skip_validation:
+      type: boolean
+      description: Skip field validation (default false)
+      default: false
+  required:
+    - patch

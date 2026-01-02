@@ -16,7 +16,7 @@ function Invoke-SolutionStandardsList {
         if (-not $solutionRoot) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.standards.list" `
+                -Tool "solution-standards-list" `
                 -Version "1.0.0" `
                 -Summary "Failed to list standards: not in a dotbot directory." `
                 -Data @{} `
@@ -30,7 +30,7 @@ function Invoke-SolutionStandardsList {
         if (-not (Test-Path $standardsPath)) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.standards.list" `
+                -Tool "solution-standards-list" `
                 -Version "1.0.0" `
                 -Summary "No standards directory found." `
                 -Data @{
@@ -127,7 +127,7 @@ function Invoke-SolutionStandardsList {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.standards.list" `
+            -Tool "solution-standards-list" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $result `

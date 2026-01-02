@@ -16,7 +16,7 @@ function Invoke-SolutionTechStack {
         if (-not $solutionRoot) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.tech_stack" `
+                -Tool "solution-tech-stack" `
                 -Version "1.0.0" `
                 -Summary "Failed to load tech stack: not in a dotbot directory." `
                 -Data @{} `
@@ -30,7 +30,7 @@ function Invoke-SolutionTechStack {
         if (-not (Test-Path $techStackPath)) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.tech_stack" `
+                -Tool "solution-tech-stack" `
                 -Version "1.0.0" `
                 -Summary "Tech stack file not found." `
                 -Data @{} `
@@ -66,7 +66,7 @@ function Invoke-SolutionTechStack {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.tech_stack" `
+            -Tool "solution-tech-stack" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $result `

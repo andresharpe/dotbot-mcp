@@ -15,6 +15,54 @@ This document provides comprehensive documentation for all MCP tools provided by
 
 ---
 
+## Envelope Response Format
+
+All `solution.*` tools return responses in a standardized **envelope format** that wraps the actual data with metadata, error handling, and audit information.
+
+### Response Structure
+
+```json
+{
+  "schema_id": "dotbot-mcp-response@1",
+  "tool": "solution-info",
+  "version": "1.0.0",
+  "status": "ok|warning|error",
+  "summary": "One-sentence summary",
+  "data": { /* tool-specific output */ },
+  "warnings": [],
+  "errors": [],
+  "audit": {
+    "timestamp": "2026-01-02T13:57:00Z",
+    "duration_ms": 123,
+    "source": ".bot/mcp/tools/solution-info/script.ps1",
+    "host": "warp"
+  }
+}
+```
+
+### Key Benefits
+
+- **Consistency**: Same structure across all tools
+- **Error Handling**: Structured errors with error codes
+- **Observability**: Timing, source tracking, audit trails
+- **Status Auto-Computation**: `status` field computed from errors/warnings
+- **Kebab-Case Naming**: Tool names use kebab-case (e.g., `solution-info`, `solution-tech-stack`)
+
+### Status Field
+
+The `status` field is automatically computed:
+- `"error"`: If `errors.length > 0`
+- `"warning"`: If `warnings.length > 0` AND `errors.length == 0`
+- `"ok"`: If both `errors.length == 0` AND `warnings.length == 0`
+
+### Output Examples
+
+Throughout this document, output examples show the `data` field content for brevity. In practice, all responses are wrapped in the envelope format shown above.
+
+📘 **For complete envelope specification, see [ENVELOPE-RESPONSE-STANDARD.md](./ENVELOPE-RESPONSE-STANDARD.md)**
+
+---
+
 ## Solution Awareness Tools
 
 Solution Awareness Tools help AI agents understand the structure, tech stack, and organization of dotbot-managed repositories. They use a **hybrid discovery approach**: auto-discovering projects from the filesystem while allowing optional metadata enrichment through a registry.

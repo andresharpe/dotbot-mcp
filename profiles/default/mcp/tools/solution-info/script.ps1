@@ -16,7 +16,7 @@ function Invoke-SolutionInfo {
         if (-not $solutionRoot) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.info" `
+                -Tool "solution-info" `
                 -Version "1.0.0" `
                 -Summary "Failed to retrieve solution info: not in a dotbot directory." `
                 -Data @{} `
@@ -139,7 +139,7 @@ function Invoke-SolutionInfo {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.info" `
+            -Tool "solution-info" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $result `

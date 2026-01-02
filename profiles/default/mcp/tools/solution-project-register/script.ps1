@@ -30,7 +30,7 @@ function Invoke-SolutionProjectRegister {
         if (-not $projectName) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.project.register" `
+                -Tool "solution-project-register" `
                 -Version "1.0.0" `
                 -Summary "Failed to register project: project_name is required." `
                 -Data @{} `
@@ -47,7 +47,7 @@ function Invoke-SolutionProjectRegister {
         if (-not $project) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.project.register" `
+                -Tool "solution-project-register" `
                 -Version "1.0.0" `
                 -Summary "Project '$projectName' not found in solution." `
                 -Data @{} `
@@ -89,7 +89,7 @@ function Invoke-SolutionProjectRegister {
             $duration = Get-ToolDuration -Stopwatch $timer
             $errorCode = if ($_.Exception.Message -match 'Duplicate alias') { "ALIAS_CONFLICT" } else { "REGISTRY_PARSE_ERROR" }
             return New-EnvelopeResponse `
-                -Tool "solution.project.register" `
+                -Tool "solution-project-register" `
                 -Version "1.0.0" `
                 -Summary "Failed to save registry: $($_.Exception.Message)" `
                 -Data @{} `
@@ -128,7 +128,7 @@ function Invoke-SolutionProjectRegister {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.project.register" `
+            -Tool "solution-project-register" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $result `

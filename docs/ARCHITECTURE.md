@@ -493,6 +493,50 @@ await callTool('solution_project_register', {
 const backend = projects.find(p => p.alias === 'api');
 ```
 
+### Envelope Response Standard
+
+**Purpose**: Consistent, structured response format for all MCP tools
+
+**Problem**: Inconsistent tool responses, lack of error handling standards, no metadata for debugging
+
+**Solution**: All `solution.*` MCP tools return responses in a standardized envelope format:
+
+```json
+{
+  "schema_id": "dotbot-mcp-response@1",
+  "tool": "solution-info",
+  "version": "1.0.0",
+  "status": "ok|warning|error",
+  "summary": "One-sentence summary of operation result",
+  "data": {
+    "...": "Actual tool-specific output"
+  },
+  "warnings": [],
+  "errors": [],
+  "audit": {
+    "timestamp": "2026-01-02T13:57:00Z",
+    "duration_ms": 123,
+    "source": ".bot/mcp/tools/solution-info/script.ps1",
+    "host": "warp|claude-desktop|ci|null"
+  }
+}
+```
+
+**Benefits**:
+- **Consistency**: All tools use same response structure
+- **Error handling**: Structured errors/warnings with error codes
+- **Observability**: Audit metadata for timing, source tracking, correlation
+- **Status computation**: Automatic determination of response health
+- **Tool naming**: Kebab-case standard (e.g., `solution-info`, `solution-tech-stack`)
+
+**Key Fields**:
+- `status`: Auto-computed from errors/warnings arrays (error > warning > ok)
+- `summary`: Human-readable one-sentence description of what happened
+- `data`: Tool-specific output (preserves existing data structure)
+- `audit`: Metadata for debugging, timing, and traceability
+
+📘 **See [ENVELOPE-RESPONSE-STANDARD.md](ENVELOPE-RESPONSE-STANDARD.md) for complete specification**
+
 ### YAML Frontmatter Standard
 
 **Purpose**: Machine-readable metadata for all dotbot artifacts

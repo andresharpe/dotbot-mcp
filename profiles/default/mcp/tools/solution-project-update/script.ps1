@@ -30,7 +30,7 @@ function Invoke-SolutionProjectUpdate {
         if (-not $projectName) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.project.update" `
+                -Tool "solution-project-update" `
                 -Version "1.0.0" `
                 -Summary "Failed to update project: project_name is required." `
                 -Data @{} `
@@ -66,7 +66,7 @@ function Invoke-SolutionProjectUpdate {
         if (-not $entry) {
             $duration = Get-ToolDuration -Stopwatch $timer
             return New-EnvelopeResponse `
-                -Tool "solution.project.update" `
+                -Tool "solution-project-update" `
                 -Version "1.0.0" `
                 -Summary "Project '$projectName' not found in registry." `
                 -Data @{} `
@@ -107,7 +107,7 @@ function Invoke-SolutionProjectUpdate {
             $duration = Get-ToolDuration -Stopwatch $timer
             $errorCode = if ($_.Exception.Message -match 'Duplicate alias') { "ALIAS_CONFLICT" } else { "REGISTRY_PARSE_ERROR" }
             return New-EnvelopeResponse `
-                -Tool "solution.project.update" `
+                -Tool "solution-project-update" `
                 -Version "1.0.0" `
                 -Summary "Failed to save registry: $($_.Exception.Message)" `
                 -Data @{} `
@@ -133,7 +133,7 @@ function Invoke-SolutionProjectUpdate {
         # Build envelope
         $duration = Get-ToolDuration -Stopwatch $timer
         return New-EnvelopeResponse `
-            -Tool "solution.project.update" `
+            -Tool "solution-project-update" `
             -Version "1.0.0" `
             -Summary $summary `
             -Data $result `
