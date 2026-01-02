@@ -54,7 +54,7 @@ This repository includes 7 working tools as examples:
 6. **get_timezones** - List available system timezones
 
 ### Location Tools (requires API key)
-7. **get_public_holidays** - Check if a date is a public holiday at a location using coordinates
+7. **get_public_holidays** - Check if a date is a public holiday using place names or coordinates
 
 See `examples.ps1` for usage patterns, or explore `.bot/mcp/tools/` to see how each tool is implemented.
 

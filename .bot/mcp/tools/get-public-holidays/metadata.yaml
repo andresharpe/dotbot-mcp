@@ -5,7 +5,7 @@ inputSchema:
   properties:
     location:
       type: string
-      description: 'Place name, address, or city (e.g., "Mondeor", "Paris, France", "New York"). Either this OR latitude/longitude is required.'
+      description: 'Place name, address, city, or point of interest (e.g., "Mondeor", "Eiffel Tower", "Times Square, New York", "Tokyo"). Either this OR latitude/longitude is required.'
     latitude:
       type: number
       description: 'Latitude coordinate (-90 to 90). Required if location is not provided.'

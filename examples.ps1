@@ -133,8 +133,47 @@ foreach ($fmt in $formats) {
     Write-Host "    $($ex | ConvertTo-Json -Compress)"
 }
 
+# Example 9: Check if today is a holiday using place name
+$example9 = @{
+    tool = 'get_public_holidays'
+    arguments = @{
+        location = 'Eiffel Tower'
+    }
+}
+
+Write-Host "Example 9: Check if today is a holiday at Eiffel Tower (Paris)"
+Write-Host ($example9 | ConvertTo-Json)
 Write-Host ""
+
+# Example 10: Check specific date using city name
+$example10 = @{
+    tool = 'get_public_holidays'
+    arguments = @{
+        location = 'New York'
+        date = '2026-07-04'
+    }
+}
+
+Write-Host "Example 10: Check if July 4th 2026 is a holiday in New York"
+Write-Host ($example10 | ConvertTo-Json)
+Write-Host ""
+
+# Example 11: Check using coordinates
+$example11 = @{
+    tool = 'get_public_holidays'
+    arguments = @{
+        latitude = -26.275
+        longitude = 28.004
+    }
+}
+
+Write-Host "Example 11: Check today's holiday status using coordinates (Johannesburg)"
+Write-Host ($example11 | ConvertTo-Json)
+Write-Host ""
+
 Write-Host "To test these examples with the MCP server:"
 Write-Host "  1. Run the server: pwsh -File .bot/mcp/dotbot-mcp.ps1"
 Write-Host "  2. Send JSON-RPC requests with the tool name and arguments shown above"
 Write-Host "  3. Or integrate with Claude Desktop using mcp-config.json configuration"
+Write-Host ""
+Write-Host "Note: get_public_holidays requires a Google Maps API key in .env file"
