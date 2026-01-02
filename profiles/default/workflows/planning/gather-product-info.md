@@ -26,6 +26,10 @@ artifacts_created:
 
 Collect comprehensive product information through guided questions with options.
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.structure` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
 ## Pre-Flight Check
 
 Check if product folder already exists. If so:

@@ -27,6 +27,10 @@ artifacts_created:
 
 This workflow guides you through implementing features based on specifications.
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info`, `solution.tech_stack`, or `solution.standards.list` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
 ## Prerequisites
 
 - Completed specification document

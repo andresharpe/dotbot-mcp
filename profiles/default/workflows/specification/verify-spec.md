@@ -29,6 +29,10 @@ artifacts_created:
 5. **Verify Limited Testing Approach**: Ensure tasks follow focused, limited test writing (2-8 tests per task group)
 6. **Document Findings**: Create verification report
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.structure` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
 ## Workflow
 
 ### Step 1: Review Original Q&A

@@ -36,6 +36,31 @@ A product mission serves as the north star for development decisions. It:
 - Knowledge of target users
 - Product concept or vision
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.structure` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for:
+- How to handle envelope responses
+- Checking status, errors, and data fields
+- Proper error handling
+
+## Artifact Frontmatter Requirements
+
+When creating `mission.md`, **add YAML frontmatter** at the top. See `.bot/standards/global/workflow-mcp-instructions.md` for examples.
+
+Required frontmatter:
+```yaml
+---
+type: product-mission
+id: [product-name]-mission
+version: "1.0"
+created_at: "[ISO-8601 timestamp]"
+created_by: product-planner
+related_artifacts:
+  - .bot/product/roadmap.md
+  - .bot/product/tech-stack.md
+---
+```
+
 ## Steps
 
 ### 1. Define the Vision

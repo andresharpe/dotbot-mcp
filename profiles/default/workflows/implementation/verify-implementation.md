@@ -19,6 +19,10 @@ artifacts_created: []
 
 This workflow ensures that implemented code meets quality, correctness, and standards requirements.
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.standards.list` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
 ## Purpose
 
 Verification catches issues early and ensures:

@@ -23,6 +23,26 @@ artifacts_created:
 
 Create `.bot/product/tech-stack.md` with a list of all tech stack choices that cover all aspects of this product's codebase.
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info`, `solution.tech_stack`, or `solution.standards.list` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
+## Artifact Frontmatter Requirements
+
+When creating `tech-stack.md`, **add YAML frontmatter** at the top:
+
+```yaml
+---
+type: tech-stack
+id: [product-name]-tech-stack
+version: "1.0"
+created_at: "[ISO-8601 timestamp]"
+created_by: product-planner
+related_artifacts:
+  - .bot/product/mission.md
+---
+```
+
 ### Creating the Tech Stack document
 
 #### Step 1: Note User's Input Regarding Tech Stack

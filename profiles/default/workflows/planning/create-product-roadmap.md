@@ -24,6 +24,27 @@ Generate `.bot/product/roadmap.md` with an ordered feature checklist:
 
 Do not include any tasks for initializing a new codebase or bootstrapping a new application. Assume the user is already inside the project's codebase and has a bare-bones application initialized.
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.structure` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
+## Artifact Frontmatter Requirements
+
+When creating `roadmap.md`, **add YAML frontmatter** at the top:
+
+```yaml
+---
+type: roadmap
+id: [product-name]-roadmap
+version: "1.0"
+created_at: "[ISO-8601 timestamp]"
+created_by: product-planner
+phase: mvp
+related_artifacts:
+  - .bot/product/mission.md
+---
+```
+
 #### Creating the Roadmap:
 
 1. **Review the Mission** - Read `.bot/product/mission.md` to understand the product's goals, target users, and success criteria.

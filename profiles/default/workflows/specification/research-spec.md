@@ -34,6 +34,27 @@ artifacts_created:
 5. **Ask Follow-ups**: Based on answers and visual analysis if needed
 6. **Save Requirements**: Document the requirements in `.bot/specs/[spec-name]/planning/requirements.md`
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.structure` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
+## Artifact Frontmatter Requirements
+
+When creating `requirements.md`, **add YAML frontmatter** at the top:
+
+```yaml
+---
+type: requirements
+id: [spec-name]-requirements
+version: "1.0"
+created_at: "[ISO-8601 timestamp]"
+created_by: spec-shaper
+spec_name: [spec-folder-name]
+related_artifacts:
+  - .bot/specs/[spec-name]/spec.md
+---
+```
+
 ## Workflow
 
 ### Step 0: Initialize Spec Structure

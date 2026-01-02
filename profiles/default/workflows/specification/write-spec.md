@@ -27,6 +27,28 @@ artifacts_created:
 
 This workflow guides you through writing a detailed technical specification for a feature.
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info`, `solution.tech_stack`, or `solution.standards.list` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
+## Artifact Frontmatter Requirements
+
+When creating `spec.md`, **add YAML frontmatter** at the top:
+
+```yaml
+---
+type: spec
+id: [spec-name]-spec
+version: "1.0"
+created_at: "[ISO-8601 timestamp]"
+created_by: spec-writer
+spec_name: [spec-folder-name]
+related_artifacts:
+  - .bot/specs/[spec-name]/planning/requirements.md
+  - .bot/specs/[spec-name]/tasks.md
+---
+```
+
 ## Prerequisites
 
 - Clear understanding of the feature requirements

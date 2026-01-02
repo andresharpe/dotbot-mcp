@@ -31,6 +31,27 @@ artifacts_created:
 3. **Group tasks by specialization**: Group tasks that require the same skill or stack specialization together
 4. **Create Tasks list**: Create the markdown tasks list broken into groups with sub-tasks
 
+## MCP Tool Response Handling
+
+This workflow may call `solution.info` or `solution.structure` MCP tools. Follow `.bot/standards/global/workflow-mcp-instructions.md` for envelope response handling.
+
+## Artifact Frontmatter Requirements
+
+When creating `tasks.md`, **add YAML frontmatter** at the top:
+
+```yaml
+---
+type: tasks
+id: [spec-name]-tasks
+version: "1.0"
+created_at: "[ISO-8601 timestamp]"
+created_by: tasks-list-creator
+spec_name: [spec-folder-name]
+related_artifacts:
+  - .bot/specs/[spec-name]/spec.md
+---
+```
+
 ## Workflow
 
 ### Step 1: Analyze Spec & Requirements
