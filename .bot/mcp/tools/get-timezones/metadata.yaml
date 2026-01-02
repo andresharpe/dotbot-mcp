@@ -1,5 +1,0 @@
-name: get_timezones
-description: List all available system timezones
-inputSchema:
-  type: object
-  properties: {}
