@@ -389,11 +389,11 @@ dotbot includes battle-tested workflows:
 
 ## Documentation
 
-- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute setup guide
-- **[MCP-TOOLS.md](MCP-TOOLS.md)** - Complete MCP tools reference
-- **[FRONTMATTER-SPEC.md](FRONTMATTER-SPEC.md)** - YAML frontmatter standard for artifacts
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design
-- **[MIGRATION.md](MIGRATION.md)** - Upgrading from dotbot v1.x
+- **[QUICKSTART.md](docs/QUICKSTART.md)** - 5-minute setup guide
+- **[MCP-TOOLS.md](docs/MCP-TOOLS.md)** - Complete MCP tools reference
+- **[FRONTMATTER-SPEC.md](docs/FRONTMATTER-SPEC.md)** - YAML frontmatter standard for artifacts
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and design
+- **[MIGRATION.md](docs/MIGRATION.md)** - Upgrading from dotbot v1.x
 - **[profiles/default/mcp/README-NEWTOOL.md](profiles/default/mcp/README-NEWTOOL.md)** - Creating MCP tools
 - **[WARP.md](WARP.md)** - Architecture and AI agent guidelines
 
