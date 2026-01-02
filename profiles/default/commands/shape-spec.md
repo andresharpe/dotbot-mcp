@@ -39,32 +39,16 @@ Use this command when you:
 
 ## Process
 
-### Phase 1: Initialize Spec
+### Phase 1: Initialize & Gather Requirements
 
-Create a basic spec document structure:
-
-```markdown
-# [Feature Name] - Spec (Draft)
-
-## Problem
-[What problem are we solving?]
-
-## Proposed Solution
-[High-level approach]
-
-## Scope
-### In Scope
-- [What we'll include]
-
-### Out of Scope
-- [What we won't include]
-
-## Open Questions
-- [Questions to resolve]
-
-## Design Decisions
-[Key decisions and rationale]
-```
+The workflow will:
+1. Get feature description from you (or check product roadmap)
+2. Create spec folder structure
+3. Understand product context
+4. Ask clarifying questions about requirements
+5. Request visual assets if available
+6. Check for reusable code patterns
+7. Document all requirements
 
 ### Phase 2: Shape the Spec
 

@@ -7,12 +7,13 @@ agent: spec-shaper
 dependencies:
   - type: standard
     id: global/workflow-interaction
-  - type: workflow
-    id: initialize-spec
 mcp_tools_used:
   - solution.info
   - solution.structure
 artifacts_created:
+  - type: spec-folder-structure
+    location: .bot/specs/[YYYY-MM-DD]-[spec-name]/
+    frontmatter_required: false
   - type: requirements
     location: .bot/specs/[spec-name]/planning/requirements.md
     frontmatter_required: true
@@ -26,7 +27,7 @@ artifacts_created:
 
 ## Core Responsibilities
 
-1. **Read Initial Idea**: Understand what the user wants to build
+1. **Initialize Spec Structure**: Get feature description and create folder structure
 2. **Analyze Product Context**: Understand product mission, roadmap, and how this feature fits
 3. **Ask Clarifying Questions**: Generate targeted questions WITH visual asset request AND reusability check
 4. **Process Answers**: Analyze responses and any provided visuals
@@ -34,6 +35,36 @@ artifacts_created:
 6. **Save Requirements**: Document the requirements in `.bot/specs/[spec-name]/planning/requirements.md`
 
 ## Workflow
+
+### Step 0: Initialize Spec Structure
+
+**Get the feature description:**
+
+IF you were given a description of the feature, use that to initiate a new spec.
+
+OTHERWISE follow these steps:
+
+1. Check `.bot/product/roadmap.md` to find the next feature in the roadmap (if it exists).
+2. Ask the user:
+
+```
+Which feature would you like to create a spec for?
+
+- [If roadmap exists: The roadmap shows [feature description] is next. Go with that?]
+- Or provide a description of a feature you'd like to spec out.
+```
+
+**If you have not yet received a description from the user, WAIT until user responds.**
+
+**Create the spec folder structure:**
+
+Determine a kebab-case spec name from the user's description, then create:
+
+- `.bot/specs/[YYYY-MM-DD]-[spec-name]/planning/`
+- `.bot/specs/[YYYY-MM-DD]-[spec-name]/planning/visuals/`
+- `.bot/specs/[YYYY-MM-DD]-[spec-name]/implementation/`
+
+Leave the implementation folder empty for now.
 
 ### Step 1: Understand Product Context
 
