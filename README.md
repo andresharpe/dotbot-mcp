@@ -1,185 +1,385 @@
-# dotbot-mcp - Project-Native MCP Server Framework
+# dotbot - AI-Driven Development with Orchestration & Execution
 
-A pure PowerShell framework for building project-native MCP (Model Context Protocol) servers with zero external dependencies. Create intelligent, file-based tools that live in your repository and make your AI development partner smarter, more efficient, and context-aware.
+A unified system that transforms AI agents from ad-hoc "vibe coders" into reliable contributors through structured orchestration and battle-tested execution workflows. Pure PowerShell, zero dependencies, cross-platform.
 
 ## Vision
 
-**Your AI agent should understand your project like a team member does.**
+**AI agents should work like disciplined team members, not confused interns.**
 
-dotbot-mcp enables you to build MCP servers that:
-- **Live in your repository** - Everything your AI needs is version-controlled alongside your code
-- **Zero dependencies** - Pure PowerShell, works anywhere PowerShell 7+ runs
-- **File-based by default** - Transparent, human-readable, git-friendly state and configuration
-- **Self-documenting** - Tools are discoverable with clear schemas and metadata
-- **Extensible** - Add new tools without touching server code
+dotbot provides:
+- **Orchestration Layer (MCP)** - Project-native tools that track state, determine intent, and manage feature lifecycles
+- **Execution Layer** - Proven workflows, specialized agent personas, and quality standards that guide implementation
+- **Profile System** - Technology-specific customization (default, dotnet, python, etc.)
+- **File-First Philosophy** - Everything is transparent, git-friendly, human-readable files
 
-### Real-World Use Cases
+The result: AI agents get explicit instructions about what to do next and proven patterns for how to do it.
 
-Build MCP tools for:
-- **Project management**: Structure exploration, dependency graphs, backlog management
-- **Lifecycle operations**: Start/stop/restart services, deployment workflows, health checks
-- **Specification management**: Requirements tracking, spec generation, design documents
-- **Task planning**: Break down work, track progress, manage dependencies
-- **Development workflows**: Prompt generation, code review automation, testing orchestration
-- **State tracking**: Sprint progress, feature flags, release readiness
+## What Problem Does This Solve?
 
-### Philosophy
+Without structure, AI agents:
+- 🔴 Get confused about project state ("What was I working on?")
+- 🔴 Skip critical steps (no tests, no validation)
+- 🔴 Make inconsistent decisions (different approaches each time)
+- 🔴 Waste tokens reading entire codebases
+- 🔴 Break things when context shifts
 
-**Idiomatic approach**: Everything your AI partner needs should be in the repository - specs, state files, metadata, tool definitions. This makes exploration transparent and development traceable. Tools can use databases or external services when needed, but the default is plain files that both humans and AI can read.
+With dotbot:
+- ✅ Know exactly where they are in the development lifecycle
+- ✅ Follow proven workflows (Plan → Shape → Specify → Tasks → Implement → Verify)
+- ✅ Apply consistent standards and best practices
+- ✅ Get targeted context through MCP tools
+- ✅ Track state across sessions
 
-**Save time and tokens**: Context-aware tools reduce the need for repeated explanations, large file reads, and trial-and-error. Your AI agent gets accurate, structured information on the first try.
+## How It Works
 
-## This Repository
+### Two Layers Working Together
 
-dotbot-mcp itself is a working example - a date/time tool server demonstrating the modular architecture. Use it as a template for building your own project-native MCP servers.
+**1. Orchestration Layer (MCP Server)**
+- Tracks current feature, phase, and task
+- Determines "what should happen next" based on project state
+- Exposes structured tools: `state.get`, `task.next`, `feature.start`, etc.
+- Returns explicit instructions with embedded workflow content
+- Eliminates the "read 50 files to understand context" problem
 
-### Features
+**2. Execution Layer**
+- **Workflows** - Step-by-step processes (17 workflows from planning to verification)
+- **Agents** - Specialized personas (product-planner, spec-writer, implementer, etc.)
+- **Standards** - Quality guardrails organized by domain (backend, frontend, testing)
+- **Commands** - Warp command templates for common operations
 
-- **Modular tool discovery**: Drop tools in folders, they're auto-loaded
-- **Convention over configuration**: No manual registration, just follow the structure
-- **Pure PowerShell**: No npm, pip, or cargo - just pwsh
-- **Cross-platform**: Windows, Linux, macOS with PowerShell 7+
-- **Standard MCP**: JSON-RPC over stdio, works with Claude Desktop, Warp, etc.
+### Example: Adding a Feature
 
-## Included Tools
+```bash
+# AI agent calls MCP tool
+→ intent.next()
 
-This repository includes 8 working tools as examples:
+# MCP responds with explicit instructions + workflow content
+← {
+    action: "research-spec",
+    reason: "Feature started, ready to shape specification",
+    workflow_content: "<full research workflow embedded>",
+    phase: "shape",
+    current_task: null
+  }
 
-### Date/Time Tools
-1. **get_current_datetime** - Current time with timezone/format support
-2. **add_to_date** - Date arithmetic (add/subtract time units)
-3. **get_date_difference** - Calculate time spans between dates
-4. **format_date** - Convert between date formats
-5. **parse_timestamp** - Unix timestamp conversion
-6. **get_timezones** - List available system timezones
+# AI agent follows embedded workflow with agent persona
+# Workflow guides: research, scope, identify constraints
+# Standards enforce: consistent patterns, testing requirements
 
-### Location Tools (requires API key)
-7. **get_public_holidays** - Check if a date is a public holiday using place names or coordinates
-8. **get_current_time_at** - Get the current local time at any location worldwide
+# When complete, AI updates state
+→ state.set({ phase: "specify" })
 
-See `examples.ps1` for usage patterns, or explore `.bot/mcp/tools/` to see how each tool is implemented.
-
-## Project Structure
-
-```
-.
-├── .env.example             # API keys template (copy to .env)
-├── .gitignore               # Includes .env files
-└── .bot/mcp/
-    ├── dotbot-mcp.ps1           # Main server entry point
-    ├── dotbot-mcp-helpers.ps1   # Shared helper functions
-    ├── metadata.yaml            # Server metadata
-    ├── README-NEWTOOL.md        # Guide for adding new tools
-    └── tools/                   # Auto-discovered tools
-        ├── get-current-datetime/
-        ├── add-to-date/
-        ├── get-date-difference/
-        ├── format-date/
-        ├── parse-timestamp/
-        ├── get-timezones/
-        └── get-public-holidays/  # Requires Google Maps API key
+# Process continues through: specify → tasks → implement → verify
 ```
 
-Each tool is self-contained with:
-- `script.ps1` - Implementation
-- `metadata.yaml` - Schema and description
-- `test.ps1` - Tool-specific tests
+## Quick Start
+
+### 1. Install Globally
+
+```powershell
+# Clone repository
+git clone https://github.com/[user]/dotbot-mcp ~/dotbot-temp
+cd ~/dotbot-temp
+
+# Run installation
+pwsh init.ps1
+
+# Verify installation
+dotbot status
+```
+
+This installs dotbot to `~/dotbot` and adds it to your PATH.
+
+### 2. Initialize a Project
+
+```powershell
+cd your-project
+dotbot init
+```
+
+This creates:
+- `.bot/` - Agents, workflows, standards, MCP server
+- `.warp/workflows/` - Warp workflow integrations
+- `.bot/.dotbot-state.json` - Installation tracking
+
+### 3. Connect MCP Server
+
+**For Warp:**
+- Settings → Features → MCP Servers
+- Add server with command: `pwsh -NoProfile -ExecutionPolicy Bypass -File /path/to/project/.bot/mcp/dotbot-mcp.ps1`
+
+**For Claude Desktop:**
+- Edit `claude_desktop_config.json` (see Installation section below)
+
+### 4. Start Developing
+
+Your AI agent can now:
+- Query current state: `state.get()`
+- Start features: `feature.start({ name: "User Auth" })`
+- Get next action: `intent.next()`
+- Execute tasks: `task.next()` → follow workflow → `task.complete()`
 
 ## Installation
 
-### For Claude Desktop
+### Global Installation
 
-1. Locate your Claude Desktop config file:
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Linux: `~/.config/Claude/claude_desktop_config.json`
+```powershell
+# Clone to temporary location
+git clone https://github.com/[user]/dotbot-mcp ~/dotbot-temp
+cd ~/dotbot-temp
 
-2. Add this server configuration:
+# Install (cross-platform)
+pwsh init.ps1
+
+# Verify
+dotbot --version  # Should show: 2.0.0
+dotbot help
+```
+
+This:
+- Copies dotbot to `~/dotbot`
+- Adds `~/dotbot/bin` to PATH
+- Makes `dotbot` command available globally
+
+### Project Installation
+
+```powershell
+cd your-project
+
+# Initialize with default profile
+dotbot init
+
+# Or specify profile
+dotbot init --profile dotnet
+```
+
+### MCP Server Configuration
+
+**Warp:**
 ```json
+// Settings → Features → MCP Servers → Add Server
+{
+  "command": "pwsh",
+  "args": [
+    "-NoProfile",
+    "-ExecutionPolicy", "Bypass",
+    "-File",
+    "/absolute/path/to/project/.bot/mcp/dotbot-mcp.ps1"
+  ]
+}
+```
+
+**Claude Desktop:**
+```json
+// %APPDATA%\Claude\claude_desktop_config.json (Windows)
+// ~/Library/Application Support/Claude/claude_desktop_config.json (macOS)
 {
   "mcpServers": {
-    "dotbot-mcp": {
+    "dotbot": {
       "command": "pwsh",
       "args": [
         "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
+        "-ExecutionPolicy", "Bypass",
         "-File",
-        "/absolute/path/to/dotbot-mcp/.bot/mcp/dotbot-mcp.ps1"
+        "/absolute/path/to/project/.bot/mcp/dotbot-mcp.ps1"
       ]
     }
   }
 }
 ```
 
-**Note:** Replace the file path with your actual installation path. On Windows, use double backslashes: `C:\\Users\\...`
+**Important:** Use absolute paths. On Windows, escape backslashes: `C:\\Users\\...`
 
-3. Restart Claude Desktop
+## Repository Structure
 
-### API Keys Configuration
+```
+dotbot-mcp/  (repository name)
+├── bin/
+│   └── dotbot.ps1                    # CLI entry point
+├── scripts/                          # Installation system
+│   ├── base-install.ps1             # Global installation
+│   ├── project-install.ps1          # Project installation
+│   ├── Common-Functions.psm1
+│   ├── Platform-Functions.psm1
+│   └── Template-Processor.psm1
+├── profiles/                         # Profile system
+│   ├── default/
+│   │   ├── agents/                  # 8 specialized personas
+│   │   ├── standards/               # 16 coding standards
+│   │   ├── workflows/               # 17 development workflows
+│   │   ├── commands/                # 7 Warp commands
+│   │   └── mcp/                     # MCP orchestration server
+│   │       ├── dotbot-mcp.ps1
+│   │       ├── dotbot-mcp-helpers.ps1
+│   │       ├── metadata.yaml
+│   │       └── tools/               # MCP tools (state, intent, task, etc.)
+│   └── dotnet/                      # .NET-specific profile
+├── config.yml                        # Global configuration
+├── init.ps1                          # Smart installer
+├── README.md
+├── QUICKSTART.md
+├── MIGRATION.md                      # For dotbot v1.x users
+└── LICENSE
+```
 
-Some tools require API keys to function (e.g., `get_public_holidays` needs Google Maps API).
+## Installed Project Structure
 
-1. Copy the example environment file:
+After `dotbot init`, your project has:
+
+```
+project/
+├── .bot/
+│   ├── agents/                       # Execution agents
+│   │   ├── implementer.md
+│   │   ├── spec-writer.md
+│   │   └── ... (8 total)
+│   ├── standards/                    # Coding standards
+│   │   ├── global/
+│   │   ├── backend/
+│   │   ├── frontend/
+│   │   └── testing/
+│   ├── workflows/                    # Execution workflows
+│   │   ├── planning/
+│   │   ├── specification/
+│   │   └── implementation/
+│   ├── commands/                     # Warp commands
+│   ├── mcp/                          # MCP orchestration server
+│   │   ├── dotbot-mcp.ps1           # Server entry point
+│   │   ├── dotbot-mcp-helpers.ps1
+│   │   ├── metadata.yaml
+│   │   └── tools/                    # Orchestration tools
+│   │       ├── state.get/           # (Future Phase 3)
+│   │       ├── intent.next/
+│   │       ├── task.next/
+│   │       └── feature.start/
+│   ├── .dotbot-state.json           # Installation metadata
+│   └── .env                          # API keys (git-ignored)
+├── .warp/
+│   └── workflows/                    # Warp workflow shims
+└── WARP.md                          # Project-specific AI rules (optional)
+```
+
+## CLI Commands
+
+### Global Commands
 ```powershell
-cp .env.example .env
+dotbot install      # Install dotbot globally
+dotbot update       # Update global installation
+dotbot uninstall    # Remove global installation
+dotbot status       # Show installation status
+dotbot help         # Show help
 ```
 
-2. Edit `.env` and add your API keys:
-```bash
-GOOGLE_MAPS_API_KEY=your_actual_api_key_here
-```
-
-3. Get your Google Maps API key:
-   - Visit [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select an existing one
-   - Enable the **Geocoding API** in the API Library
-   - Create credentials (API Key) under "Credentials"
-
-**Note:** The `.env` file is git-ignored for security. Never commit API keys to version control.
-
-### Standalone Testing
-
-Test the server directly:
-
+### Project Commands
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .bot/mcp/dotbot-mcp.ps1
+dotbot init                    # Initialize current project
+dotbot init --profile dotnet   # Initialize with specific profile
+dotbot update-project          # Update project to latest
+dotbot remove-project          # Remove dotbot from project
 ```
 
-Then send JSON-RPC requests via stdin:
+## MCP Orchestration Tools
 
-```json
-{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}
-{"jsonrpc":"2.0","id":2,"method":"tools/list"}
-{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"get_current_datetime","arguments":{"utc":true}}}
-```
+**Note:** Phase 3 tools (state management, task orchestration) are planned. Current MCP server includes example date/time tools demonstrating the architecture.
+
+### Planned Core Tools (Phase 3)
+
+**State Management:**
+- `state.get` - Current feature, phase, task, branch
+- `state.set` - Update project state
+- `state.history` - Audit trail of state transitions
+
+**Intent & Orchestration:**
+- `intent.next` - What should happen next (with embedded workflow content)
+- `intent.explain` - Why a particular action is recommended
+
+**Task Management:**
+- `task.list` - All tasks with status and dependencies
+- `task.next` - Next executable task (with spec excerpts, validation commands)
+- `task.start` - Mark task in progress
+- `task.complete` - Record completion with evidence
+
+**Feature Lifecycle:**
+- `feature.start` - Create feature scaffold, branch, state tracking
+- `feature.switch` - Switch between features
+- `feature.status` - Current feature progress
+
+**Specification & Context:**
+- `spec.section.get` - Extract relevant spec sections
+- `project.info` - Project metadata, stack, conventions
+
+## Profiles
+
+dotbot uses profiles to customize content for different technology stacks:
+
+- **default** - General-purpose (8 agents, 16 standards, 17 workflows)
+- **dotnet** - .NET-specific standards and workflows
+- **python** - (Future) Python ecosystem patterns
+- **react** - (Future) React/frontend patterns
+
+Create custom profiles by copying a profile directory and modifying content.
+
+## Development Workflows
+
+dotbot includes battle-tested workflows:
+
+### Planning
+- Gather product information
+- Determine project strategy
+- Produce PRODUCT-MISSION document
+
+### Specification
+- Research and scope features
+- Write technical specifications
+- Review and iterate
+
+### Implementation
+- Create task lists from specs
+- Implement individual tasks
+- Verify implementation
+- Handle course corrections
+
+### Standards
+- Global patterns (error handling, naming, documentation)
+- Backend standards (APIs, databases, security)
+- Frontend standards (components, state, accessibility)
+- Testing standards (unit, integration, coverage)
 
 ## Documentation
 
-- **[QUICKSTART.md](QUICKSTART.md)** - Get up and running in 5 minutes
-- **[WARP.md](WARP.md)** - Architecture deep-dive and development guide
-- **[.bot/mcp/README-NEWTOOL.md](.bot/mcp/README-NEWTOOL.md)** - Step-by-step guide to adding new tools
-- **[examples.ps1](examples.ps1)** - Example tool usage patterns
-
-## Building Your Own Tools
-
-Adding a tool is as simple as creating a folder:
-
-```
-.bot/mcp/tools/your-tool/
-├── script.ps1       # Implement Invoke-YourTool function
-├── metadata.yaml    # Name, description, JSON Schema
-└── test.ps1         # Tool tests
-```
-
-The server automatically discovers and loads it. No registration, no configuration.
-
-See [.bot/mcp/README-NEWTOOL.md](.bot/mcp/README-NEWTOOL.md) for the complete guide.
+- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute setup guide
+- **[MIGRATION.md](MIGRATION.md)** - Upgrading from dotbot v1.x
+- **[profiles/default/mcp/README-NEWTOOL.md](profiles/default/mcp/README-NEWTOOL.md)** - Creating MCP tools
+- **[WARP.md](WARP.md)** - Architecture and AI agent guidelines
 
 ## Requirements
 
-- PowerShell 7.0 or later (cross-platform)
+- **PowerShell 7.0+** (cross-platform)
+- **Git** (for version control features)
 - No external dependencies or packages
+
+## Platform Support
+
+- ✅ Windows (PowerShell 7+)
+- ✅ macOS (via `brew install powershell`)
+- ✅ Linux (via package manager)
+
+## Philosophy
+
+### File-First
+Everything lives in the repository as plain files. State, specs, workflows, standards - all version-controlled, human-readable, and AI-accessible.
+
+### Convention Over Configuration
+Follow directory structures and naming conventions. Tools auto-discover. No manual registration.
+
+### Explicit Over Implicit
+MCP tools return resolved instructions with embedded content. No "read these 10 files and figure it out."
+
+### Discipline Over Creativity
+AI agents follow proven workflows and standards. Creativity happens within guardrails.
+
+### Project-Native
+Each project has its own MCP server and execution framework. No global state, no cross-project confusion.
 
 ## License
 
