@@ -1,3 +1,26 @@
+---
+type: command
+id: plan-product
+version: "1.0"
+title: Plan Product Command
+category: planning
+agent: product-planner
+workflows:
+  - planning/gather-product-info
+  - planning/confirm-audit-trail
+  - planning/create-product-mission
+  - planning/create-product-roadmap
+  - planning/create-product-tech-stack
+  - planning/create-project-readme
+standards:
+  - global/coding-style
+  - global/error-handling
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Plan Product Command
 
 Create a comprehensive product plan including mission, roadmap, and tech stack.

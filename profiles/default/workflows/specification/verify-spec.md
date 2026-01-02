@@ -1,3 +1,21 @@
+---
+type: workflow
+id: verify-spec
+version: "1.0"
+category: specification
+agent: spec-verifier
+dependencies:
+  - type: workflow
+    id: write-spec
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: verification-report
+    location: .bot/specs/[spec-name]/verification/spec-verification.md
+    frontmatter_required: true
+---
+
 # Spec Verification
 
 **Agent:** @.bot/agents/spec-verifier.md

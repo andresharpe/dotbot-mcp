@@ -1,3 +1,19 @@
+---
+type: workflow
+id: initialize-spec
+version: "1.0"
+category: specification
+agent: spec-initializer
+dependencies: []
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: spec-folder-structure
+    location: .bot/specs/[YYYY-MM-DD]-[spec-name]/
+    frontmatter_required: false
+---
+
 # Spec Initialization
 
 **Agent:** @.bot/agents/spec-initializer.md

@@ -1,3 +1,21 @@
+---
+type: command
+id: shape-spec
+version: "1.0"
+title: Shape Spec Command
+category: specification
+agent: spec-shaper
+workflows:
+  - specification/research-spec
+standards:
+  - global/coding-style
+  - global/error-handling
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Shape Spec Command
 
 Interactively shape and plan the scope for a new feature through guided conversation.

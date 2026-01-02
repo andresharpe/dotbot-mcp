@@ -1,3 +1,23 @@
+---
+type: workflow
+id: create-tasks-list
+version: "1.0"
+category: implementation
+agent: tasks-list-creator
+dependencies:
+  - type: standard
+    id: global/workflow-interaction
+  - type: workflow
+    id: write-spec
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: tasks
+    location: .bot/specs/[spec-name]/tasks.md
+    frontmatter_required: true
+---
+
 # Task List Creation
 
 **Agent:** @.bot/agents/tasks-list-creator.md

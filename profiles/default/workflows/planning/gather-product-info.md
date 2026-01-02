@@ -1,3 +1,21 @@
+---
+type: workflow
+id: gather-product-info
+version: "1.0"
+category: planning
+agent: product-planner
+dependencies:
+  - type: standard
+    id: global/workflow-interaction
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: audit-trail
+    location: .bot/audit/workflows/plan-product/
+    frontmatter_required: false
+---
+
 # Gather Product Info
 
 **Agent:** @.bot/agents/product-planner.md

@@ -1,3 +1,21 @@
+---
+type: workflow
+id: create-product-mission
+version: "1.0"
+category: planning
+agent: product-planner
+dependencies:
+  - type: workflow
+    id: gather-product-info
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: product-mission
+    location: .bot/product/mission.md
+    frontmatter_required: true
+---
+
 # Create Product Mission Workflow
 
 **Agent:** @.bot/agents/product-planner.md

@@ -1,3 +1,20 @@
+---
+type: command
+id: improve-rules
+version: "1.0"
+title: Improve Rules Command
+category: standards
+agent: product-planner
+workflows: []
+standards:
+  - global/coding-style
+  - global/error-handling
+mcp_tools_used:
+  - solution.info
+  - solution.standards.list
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Improve Rules Command
 
 Optimize Warp project rules in WARP.md for better clarity and agent effectiveness.

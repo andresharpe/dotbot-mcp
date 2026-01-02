@@ -1,3 +1,22 @@
+---
+type: workflow
+id: create-product-tech-stack
+version: "1.0"
+category: planning
+agent: product-planner
+dependencies:
+  - type: workflow
+    id: gather-product-info
+mcp_tools_used:
+  - solution.info
+  - solution.tech_stack
+  - solution.standards.list
+artifacts_created:
+  - type: tech-stack
+    location: .bot/product/tech-stack.md
+    frontmatter_required: true
+---
+
 # Create Product Tech Stack
 
 **Agent:** @.bot/agents/product-planner.md

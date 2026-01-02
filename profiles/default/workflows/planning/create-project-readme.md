@@ -1,3 +1,25 @@
+---
+type: workflow
+id: create-project-readme
+version: "1.0"
+category: planning
+agent: product-planner
+dependencies:
+  - type: workflow
+    id: create-product-mission
+  - type: workflow
+    id: create-product-roadmap
+  - type: workflow
+    id: create-product-tech-stack
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: readme
+    location: README.md
+    frontmatter_required: false
+---
+
 # Create Project README Workflow
 
 **Agent:** @.bot/agents/product-planner.md

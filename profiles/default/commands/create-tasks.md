@@ -1,3 +1,21 @@
+---
+type: command
+id: create-tasks
+version: "1.0"
+title: Create Tasks Command
+category: implementation
+agent: tasks-list-creator
+workflows:
+  - implementation/create-tasks-list
+standards:
+  - global/coding-style
+  - global/error-handling
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Create Tasks Command
 
 Break down a specification into implementable tasks with clear acceptance criteria.

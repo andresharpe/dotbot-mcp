@@ -1,3 +1,21 @@
+---
+type: workflow
+id: create-product-roadmap
+version: "1.0"
+category: planning
+agent: product-planner
+dependencies:
+  - type: workflow
+    id: create-product-mission
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: roadmap
+    location: .bot/product/roadmap.md
+    frontmatter_required: true
+---
+
 # Create Product Roadmap
 
 **Agent:** @.bot/agents/product-planner.md

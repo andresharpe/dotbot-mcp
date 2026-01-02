@@ -1,3 +1,22 @@
+---
+type: command
+id: write-spec
+version: "1.0"
+title: Write Specification Command
+category: specification
+agent: spec-writer
+workflows:
+  - specification/write-spec
+standards:
+  - global/coding-style
+  - global/error-handling
+mcp_tools_used:
+  - solution.info
+  - solution.tech_stack
+  - solution.standards.list
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Write Specification Command
 
 Write a detailed technical specification for a feature or component.

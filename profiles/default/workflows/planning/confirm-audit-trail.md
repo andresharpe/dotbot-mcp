@@ -1,3 +1,21 @@
+---
+type: workflow
+id: confirm-audit-trail
+version: "1.0"
+category: planning
+agent: product-planner
+dependencies:
+  - type: standard
+    id: global/workflow-interaction
+  - type: workflow
+    id: gather-product-info
+mcp_tools_used: []
+artifacts_created:
+  - type: audit-trail-validation
+    location: .bot/audit/workflows/plan-product/
+    frontmatter_required: false
+---
+
 # Confirm Audit Trail Workflow
 
 **Agent:** @.bot/agents/product-planner.md

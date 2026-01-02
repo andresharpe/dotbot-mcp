@@ -1,3 +1,18 @@
+---
+type: workflow
+id: verify-implementation
+version: "1.0"
+category: implementation
+agent: implementation-verifier
+dependencies:
+  - type: workflow
+    id: implement-tasks
+mcp_tools_used:
+  - solution.info
+  - solution.standards.list
+artifacts_created: []
+---
+
 # Verify Implementation Workflow
 
 **Agent:** @.bot/agents/implementation-verifier.md

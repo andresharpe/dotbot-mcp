@@ -1,3 +1,25 @@
+---
+type: command
+id: implement-tasks
+version: "1.0"
+title: Implement Tasks Command
+category: implementation
+agent: implementer
+workflows:
+  - implementation/implement-tasks
+standards:
+  - global/coding-style
+  - global/error-handling
+  - global/validation
+  - global/commenting
+  - global/conventions
+mcp_tools_used:
+  - solution.info
+  - solution.tech_stack
+  - solution.standards.list
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Implement Tasks Command
 
 Implement features by working through a tasks list with proper verification.

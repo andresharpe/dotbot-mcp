@@ -1,3 +1,23 @@
+---
+type: workflow
+id: research-spec
+version: "1.0"
+category: specification
+agent: spec-shaper
+dependencies:
+  - type: standard
+    id: global/workflow-interaction
+  - type: workflow
+    id: initialize-spec
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+artifacts_created:
+  - type: requirements
+    location: .bot/specs/[spec-name]/planning/requirements.md
+    frontmatter_required: true
+---
+
 # Spec Research
 
 **Agent:** @.bot/agents/spec-shaper.md

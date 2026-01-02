@@ -1,3 +1,24 @@
+---
+type: workflow
+id: implement-tasks
+version: "1.0"
+category: implementation
+agent: implementer
+dependencies:
+  - type: standard
+    id: global/workflow-interaction
+  - type: workflow
+    id: create-tasks-list
+mcp_tools_used:
+  - solution.info
+  - solution.tech_stack
+  - solution.standards.list
+artifacts_created:
+  - type: code
+    location: varies
+    frontmatter_required: false
+---
+
 # Implement Tasks Workflow
 
 **Agent:** @.bot/agents/implementer.md

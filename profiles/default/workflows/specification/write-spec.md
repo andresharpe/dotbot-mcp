@@ -1,3 +1,24 @@
+---
+type: workflow
+id: write-spec
+version: "1.0"
+category: specification
+agent: spec-writer
+dependencies:
+  - type: standard
+    id: global/workflow-interaction
+  - type: workflow
+    id: research-spec
+mcp_tools_used:
+  - solution.info
+  - solution.tech_stack
+  - solution.standards.list
+artifacts_created:
+  - type: spec
+    location: .bot/specs/[spec-name]/spec.md
+    frontmatter_required: true
+---
+
 # Write Specification Workflow
 
 **Agent:** @.bot/agents/spec-writer.md

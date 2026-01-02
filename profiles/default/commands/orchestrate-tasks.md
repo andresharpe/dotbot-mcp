@@ -1,3 +1,22 @@
+---
+type: command
+id: orchestrate-tasks
+version: "1.0"
+title: Orchestrate Tasks Command
+category: implementation
+agent: implementer
+workflows:
+  - implementation/implement-tasks
+standards:
+  - global/coding-style
+  - global/error-handling
+mcp_tools_used:
+  - solution.info
+  - solution.structure
+  - solution.standards.list
+expected_response_schema: dotbot-mcp-response@1
+---
+
 # Orchestrate Tasks Command
 
 Orchestrate the implementation of a spec across multiple task groups with structured prompts.
