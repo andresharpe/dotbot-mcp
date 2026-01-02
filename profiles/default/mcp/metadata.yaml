@@ -1,0 +1,7 @@
+protocolVersion: "2024-11-05"
+serverInfo:
+  name: "dotbot-mcp"
+  version: "1.0.0"
+  description: "Pure PowerShell MCP server framework with modular tools for date/time manipulation, location services, and more"
+capabilities:
+  tools: {}

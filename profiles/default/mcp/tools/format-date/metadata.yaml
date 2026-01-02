@@ -1,0 +1,15 @@
+name: format_date
+description: Convert a date from one format to another
+inputSchema:
+  type: object
+  properties:
+    date:
+      type: string
+      description: Date to format (ISO format or parseable string). Omit for current date/time.
+    input_format:
+      type: string
+      description: Format of the input date if not ISO
+    output_format:
+      type: string
+      description: 'Desired output format (e.g., "yyyy-MM-dd", "MM/dd/yyyy HH:mm")'
+  required: [output_format]

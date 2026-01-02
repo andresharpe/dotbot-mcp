@@ -1,27 +1,48 @@
 # PowerShell
 *.ps1xml
 *.psd1
+*.ps1~
 
 # IDE
 .vscode/
 .idea/
 *.code-workspace
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+*.lnk
 
 # Logs
 *.log
 logs/
+logs
 
 # Temporary files
 *.tmp
 *.temp
 ~$*
+temp/
 
 # Environment variables
 .env
 .env.*
 !.env.example
+
+# Testing
+*.test.ps1
+test-output/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Git
+.git/
