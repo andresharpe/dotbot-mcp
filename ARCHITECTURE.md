@@ -352,6 +352,287 @@ profiles/[name]/
 }
 ```
 
+## Solution Awareness Architecture
+
+### Overview
+
+Solution Awareness Tools help AI agents understand the structure, tech stack, and organization of dotbot-managed repositories without reading entire codebases.
+
+### Hybrid Discovery Approach
+
+The system uses a **hybrid discovery model** that balances automatic detection with AI-curated metadata:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│   FILESYSTEM (Source of Truth)                          │
+│   • .csproj, package.json, .sln files                   │
+│   • Directory structure                                 │
+│   • Project dependencies                                │
+└────────────────┬────────────────────────────────────────┘
+                 │
+                 │ Auto-Discovery
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│   DISCOVERED METADATA                                   │
+│   • Project names                                       │
+│   • Project types (dotnet-web, nextjs-app, etc.)       │
+│   • Target frameworks                                   │
+│   • Dependency counts                                   │
+│   • Auto-generated aliases (be, fe, be-core)           │
+│   • Inferred summaries                                  │
+└────────────────┬────────────────────────────────────────┘
+                 │
+                 │ Merge (Registry Wins)
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│   REGISTRY (.bot/solution/projects.json) [OPTIONAL]    │
+│   • Custom aliases                                      │
+│   • AI-enriched summaries                               │
+│   • Categorization tags                                 │
+│   • Ownership information                               │
+└────────────────┬────────────────────────────────────────┘
+                 │
+                 │ Merged Output
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│   ENRICHED PROJECT METADATA                             │
+│   • Accurate structure (from filesystem)                │
+│   • Human-friendly metadata (from registry)             │
+│   • Works without registration                          │
+│   • Improves with registration                          │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Design Principles
+
+**1. Zero Setup Required**
+- Projects work immediately without registration
+- Auto-discovery from filesystem is always primary source
+- No manual configuration needed
+
+**2. Registry Precedence**
+- Registry metadata **always wins** over inferred data
+- Allows AI to curate and improve metadata over time
+- Registry enriches, doesn't replace, discovery
+
+**3. Opt-In Enhancement**
+- Registry (`.bot/solution/projects.json`) is optional
+- Use `solution.project.register` to add rich metadata
+- Gradual enhancement as AI learns the solution
+
+**4. Single Source of Truth**
+- Filesystem is authoritative for structure
+- Registry is authoritative for metadata
+- No conflicts or synchronization issues
+
+### Registry Schema
+
+**Location**: `.bot/solution/projects.json`
+
+**Structure**:
+```json
+{
+  "registry_version": "1.0",
+  "last_updated": "2026-01-02T11:20:00Z",
+  "projects": {
+    "Axiome.Bot": {
+      "alias": "be",
+      "summary": "Main ASP.NET Core backend API",
+      "tags": ["api", "backend", "core"],
+      "owner": "backend-team",
+      "registered_at": "2025-11-20T15:00:00Z"
+    },
+    "axiome-frontend": {
+      "alias": "fe",
+      "summary": "Next.js frontend with React 19",
+      "tags": ["frontend", "ui"],
+      "owner": "frontend-team",
+      "registered_at": "2025-11-20T15:05:00Z"
+    }
+  }
+}
+```
+
+**Metadata Precedence Rules**:
+| Field | Source | Precedence |
+|-------|--------|------------|
+| `name` | Filesystem | Always from discovery |
+| `type` | File analysis | Always from discovery |
+| `path` | Filesystem | Always from discovery |
+| `target_framework` | .csproj/package.json | Always from discovery |
+| `dependency_count` | Package refs | Always from discovery |
+| `alias` | Registry → Auto-generated | Registry wins if exists |
+| `summary` | Registry → Inferred | Registry wins if exists |
+| `tags` | Registry → Inferred | Registry wins if exists |
+| `owner` | Registry only | Registry only |
+
+### Alias System
+
+**Purpose**: Short, memorable identifiers for projects
+
+**Auto-Generation Rules**:
+- Frontend projects → `fe` (or `fe-{suffix}` if multiple)
+- Backend/API projects → `be` (or `be-{suffix}` if multiple)
+- Test projects → `{target}-test` (e.g., `be-test`, `fe-test`)
+- Special projects → abbreviated name (`psx`, `mcp-ps`)
+
+**Registry Override**: Custom aliases override auto-generated ones
+
+**Example**:
+```typescript
+// Before registration - auto-generated alias
+const backend = projects.find(p => p.alias === 'be');
+
+// Register with custom alias
+await callTool('solution_project_register', {
+  project_name: 'Axiome.Bot',
+  alias: 'api'  // Override 'be'
+});
+
+// After registration - custom alias
+const backend = projects.find(p => p.alias === 'api');
+```
+
+### YAML Frontmatter Standard
+
+**Purpose**: Machine-readable metadata for all dotbot artifacts
+
+**Problem**: Freeform markdown requires fragile regex parsing
+
+**Solution**: YAML frontmatter at top of every artifact:
+
+```markdown
+---
+type: workflow
+id: implement-feature
+category: implementation
+agent: feature-implementer
+dependencies:
+  - type: agent
+    file: .bot/agents/feature-implementer.md
+  - type: standard
+    file: .bot/standards/backend/dotnet-api-design.md
+version: 1.0
+---
+
+# Feature Implementation Workflow
+
+Markdown content here...
+```
+
+**Benefits**:
+- **Dependency tracking**: Explicit file references
+- **Validation**: Schema-based completeness checks
+- **Discoverability**: Tools can index artifacts
+- **Integrity**: Detect broken references and orphan files
+
+**Validation**: `solution.health.check` with `comprehensive` level validates:
+- Frontmatter presence and schema
+- File reference integrity (broken links)
+- Orphan detection (unused files)
+- Circular dependencies
+- Bidirectional consistency (`dependencies` ↔ `used_by`)
+
+📘 **See [FRONTMATTER-SPEC.md](FRONTMATTER-SPEC.md) for complete specification**
+
+### File Reference Resolution
+
+**Problem**: AI agents miss file references and don't follow dependency chains
+
+**Solution**: All MCP tools include explicit file path lists
+
+**Example Output**:
+```json
+{
+  "primary_content": { ... },
+  "file_references": {
+    "primary_files": [
+      ".bot/product/mission.md",
+      ".bot/product/roadmap.md"
+    ],
+    "referenced_files": [
+      ".bot/agents/product-planner.md",
+      ".bot/workflows/planning/gather-product-info.md"
+    ],
+    "dependency_chain": [
+      {
+        "file": ".bot/workflows/planning/gather-product-info.md",
+        "references": [
+          ".bot/agents/product-planner.md"
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Benefits**:
+- AI gets complete file list upfront
+- No "missed dependency" errors
+- Explicit dependency visualization
+- Audit trail for what was accessed
+
+### Health Check System
+
+**Purpose**: Validate dotbot installation and file integrity
+
+**Check Levels**:
+
+**Basic**:
+- `.bot/` directory exists
+- `.dotbot-state.json` valid
+- Required subdirectories present
+
+**Standard** (includes Basic):
+- Agent/workflow/standard counts
+- Product artifacts exist
+- Projects detected
+
+**Comprehensive** (includes Standard):
+- YAML frontmatter validation
+- File reference integrity (broken links)
+- Orphan file detection (unused files)
+- Circular dependency detection
+- Test project coverage ratio
+- Git repository initialization
+
+**Usage in CI/CD**:
+```typescript
+const health = await callTool('solution_health_check', {
+  check_level: 'comprehensive'
+});
+
+if (health.status === 'error') {
+  console.error('Critical issues:', health.issues);
+  process.exit(1);
+}
+```
+
+### Why Metadata Enrichment vs Pure Discovery
+
+**Pure Discovery Problems**:
+- Inferred summaries lack context
+- Auto-generated aliases may conflict
+- No ownership information
+- No categorization (tags)
+- Static - doesn't improve over time
+
+**Registry Benefits**:
+- AI-curated, context-aware summaries
+- Custom aliases chosen by humans/AI
+- Team ownership tracking
+- Rich tagging for categorization
+- Improves as AI learns the solution
+- Optional - works without it
+
+**Best of Both**:
+- Discovery ensures accuracy (filesystem is truth)
+- Registry adds human/AI intelligence
+- No synchronization issues (clear precedence)
+- Gradual enhancement (start without, improve over time)
+
+📘 **See [MCP-TOOLS.md](MCP-TOOLS.md) for tool documentation**
+
 ## Data Flow
 
 ### Complete Feature Implementation Flow

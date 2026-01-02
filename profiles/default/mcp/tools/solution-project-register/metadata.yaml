@@ -1,0 +1,24 @@
+name: solution_project_register
+description: Register or update project metadata (alias, summary, tags, owner)
+inputSchema:
+  type: object
+  properties:
+    project_name:
+      type: string
+      description: 'Full project name (e.g., "Axiome.Bot", "axiome-frontend")'
+    alias:
+      type: string
+      description: 'Short alias for the project (e.g., "be", "fe", "psx")'
+    summary:
+      type: string
+      description: Human-readable description of the project
+    tags:
+      type: array
+      items:
+        type: string
+      description: 'Tags for categorization (e.g., ["api", "backend", "core"])'
+    owner:
+      type: string
+      description: Team or person responsible for the project
+  required:
+    - project_name

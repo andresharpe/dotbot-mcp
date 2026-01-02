@@ -280,7 +280,49 @@ dotbot remove-project          # Remove dotbot from project
 
 ## MCP Orchestration Tools
 
-**Note:** Phase 3 tools (state management, task orchestration) are planned. Current MCP server includes example date/time tools demonstrating the architecture.
+### Solution Awareness Tools (Current)
+
+The MCP server provides 7 tools that help AI agents understand your solution structure, tech stack, and coding standards:
+
+**Solution Structure:**
+- `solution.info` - High-level solution information (mission, vision, metadata)
+- `solution.structure` - Auto-discovered projects with types, aliases, and metadata
+- `solution.tech_stack` - Comprehensive tech stack information
+- `solution.standards.list` - Available coding standards by domain
+
+**Project Management:**
+- `solution.project.register` - Register project with custom metadata (alias, summary, tags)
+- `solution.project.update` - Update project metadata
+
+**Health & Validation:**
+- `solution.health.check` - Validate dotbot installation, file references, orphan detection
+
+#### Hybrid Discovery Approach
+
+Projects are **always auto-discovered** from the filesystem (`.csproj`, `package.json` files). Optional registry (`.bot/solution/projects.json`) enriches projects with AI-curated metadata.
+
+**Registry precedence:** Custom aliases, summaries, tags, and ownership override auto-discovered values.
+
+**Quick Example:**
+```typescript
+// Get solution structure - works immediately, no setup required
+const structure = await callTool('solution_structure', {});
+console.log(`Found ${structure.projects.length} projects`);
+
+// Find backend by alias
+const backend = structure.projects.find(p => p.alias === 'be');
+
+// Register project with rich metadata
+await callTool('solution_project_register', {
+  project_name: backend.name,
+  alias: 'api',
+  summary: 'Main ASP.NET Core backend API with Bot Framework',
+  tags: ['api', 'backend', 'cqrs', 'core'],
+  owner: 'platform-team'
+});
+```
+
+📘 **See [MCP-TOOLS.md](MCP-TOOLS.md) for complete documentation**
 
 ### Planned Core Tools (Phase 3)
 
@@ -348,6 +390,9 @@ dotbot includes battle-tested workflows:
 ## Documentation
 
 - **[QUICKSTART.md](QUICKSTART.md)** - 5-minute setup guide
+- **[MCP-TOOLS.md](MCP-TOOLS.md)** - Complete MCP tools reference
+- **[FRONTMATTER-SPEC.md](FRONTMATTER-SPEC.md)** - YAML frontmatter standard for artifacts
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design
 - **[MIGRATION.md](MIGRATION.md)** - Upgrading from dotbot v1.x
 - **[profiles/default/mcp/README-NEWTOOL.md](profiles/default/mcp/README-NEWTOOL.md)** - Creating MCP tools
 - **[WARP.md](WARP.md)** - Architecture and AI agent guidelines

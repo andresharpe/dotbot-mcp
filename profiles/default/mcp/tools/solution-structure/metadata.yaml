@@ -1,0 +1,13 @@
+name: solution_structure
+description: Returns solution structure including all detected projects with their types, aliases, and key metadata
+inputSchema:
+  type: object
+  properties:
+    include_dependencies:
+      type: boolean
+      description: Include dependency counts for each project
+      default: false
+    include_file_counts:
+      type: boolean
+      description: Include file counts by type
+      default: false
