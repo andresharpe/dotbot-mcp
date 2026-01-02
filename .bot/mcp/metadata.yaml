@@ -1,0 +1,7 @@
+protocolVersion: "2024-11-05"
+serverInfo:
+  name: "powershell-date-mcp"
+  version: "1.0.0"
+  description: "A pure PowerShell implementation of an MCP server that exposes deterministic date and time manipulation tools via stdio transport"
+capabilities:
+  tools: {}

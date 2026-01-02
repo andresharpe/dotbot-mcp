@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "powershell-date": {
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "C:\\Users\\andre\\repos\\dotbot-mcp\\.bot\\mcp\\dotbot-mcp.ps1"
+      ]
+    }
+  }
+}

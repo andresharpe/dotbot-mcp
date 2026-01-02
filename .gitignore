@@ -1,0 +1,27 @@
+# PowerShell
+*.ps1xml
+*.psd1
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+
+# Environment variables
+.env
+.env.*
+!.env.example

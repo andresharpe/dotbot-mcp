@@ -1,0 +1,15 @@
+name: get_public_holidays
+description: Check if a date is a public holiday at a specific geographic location using coordinates
+inputSchema:
+  type: object
+  properties:
+    latitude:
+      type: number
+      description: 'Latitude coordinate (-90 to 90)'
+    longitude:
+      type: number
+      description: 'Longitude coordinate (-180 to 180)'
+    date:
+      type: string
+      description: 'Optional date to check in ISO 8601 format (e.g., "2024-12-25"). Defaults to today if not provided.'
+  required: [latitude, longitude]
