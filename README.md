@@ -43,7 +43,7 @@ dotbot-mcp itself is a working example - a date/time tool server demonstrating t
 
 ## Included Tools
 
-This repository includes 7 working tools as examples:
+This repository includes 8 working tools as examples:
 
 ### Date/Time Tools
 1. **get_current_datetime** - Current time with timezone/format support
@@ -55,6 +55,7 @@ This repository includes 7 working tools as examples:
 
 ### Location Tools (requires API key)
 7. **get_public_holidays** - Check if a date is a public holiday using place names or coordinates
+8. **get_current_time_at** - Get the current local time at any location worldwide
 
 See `examples.ps1` for usage patterns, or explore `.bot/mcp/tools/` to see how each tool is implemented.
 

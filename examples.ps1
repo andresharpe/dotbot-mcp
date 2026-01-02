@@ -175,5 +175,41 @@ Write-Host "To test these examples with the MCP server:"
 Write-Host "  1. Run the server: pwsh -File .bot/mcp/dotbot-mcp.ps1"
 Write-Host "  2. Send JSON-RPC requests with the tool name and arguments shown above"
 Write-Host "  3. Or integrate with Claude Desktop using mcp-config.json configuration"
+# Example 12: Get current time in Tokyo
+$example12 = @{
+    tool = 'get_current_time_at'
+    arguments = @{
+        location = 'Tokyo'
+    }
+}
+
+Write-Host "Example 12: Get current time in Tokyo"
+Write-Host ($example12 | ConvertTo-Json)
 Write-Host ""
-Write-Host "Note: get_public_holidays requires a Google Maps API key in .env file"
+
+# Example 13: Get current time at a POI with custom format
+$example13 = @{
+    tool = 'get_current_time_at'
+    arguments = @{
+        location = 'Big Ben'
+        format = 'dddd, MMMM dd, yyyy hh:mm tt'
+    }
+}
+
+Write-Host "Example 13: Get current time at Big Ben (London) with custom format"
+Write-Host ($example13 | ConvertTo-Json)
+Write-Host ""
+
+# Example 14: Get current time using coordinates
+$example14 = @{
+    tool = 'get_current_time_at'
+    arguments = @{
+        latitude = -33.8568
+        longitude = 151.2153
+    }
+}
+
+Write-Host "Example 14: Get current time using coordinates (Sydney Opera House)"
+Write-Host ($example14 | ConvertTo-Json)
+Write-Host ""
+Write-Host "Note: Location tools (get_public_holidays, get_current_time_at) require a Google Maps API key in .env file"
