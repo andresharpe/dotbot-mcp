@@ -7,22 +7,43 @@ function Invoke-SolutionStandardsList {
     $helpersPath = Join-Path $PSScriptRoot '..\..\solution-helpers.psm1'
     Import-Module $helpersPath -Force -DisableNameChecking
     
+    # Start timer
+    $timer = Start-ToolTimer
+    
     try {
         # Find solution root
         $solutionRoot = Find-SolutionRoot
         if (-not $solutionRoot) {
-            throw "Not in a dotbot solution directory (no .bot folder found)"
+            $duration = Get-ToolDuration -Stopwatch $timer
+            return New-EnvelopeResponse `
+                -Tool "solution.standards.list" `
+                -Version "1.0.0" `
+                -Summary "Failed to list standards: not in a dotbot directory." `
+                -Data @{} `
+                -Errors @((New-ErrorObject -Code "DOTBOT_NOT_FOUND" -Message "Not in a dotbot solution directory (no .bot folder found)")) `
+                -Source ".bot/mcp/tools/solution-standards-list/script.ps1" `
+                -DurationMs $duration `
+                -Host (Get-McpHost)
         }
         
         $standardsPath = Join-Path $solutionRoot '.bot\standards'
         if (-not (Test-Path $standardsPath)) {
-            return @{
-                standards = @()
-                summary = @{
-                    total = 0
-                    by_domain = @{}
-                }
-            }
+            $duration = Get-ToolDuration -Stopwatch $timer
+            return New-EnvelopeResponse `
+                -Tool "solution.standards.list" `
+                -Version "1.0.0" `
+                -Summary "No standards directory found." `
+                -Data @{
+                    standards = @()
+                    summary = @{
+                        total = 0
+                        by_domain = @{}
+                    }
+                } `
+                -Warnings @("Standards directory does not exist: .bot/standards") `
+                -Source ".bot/mcp/tools/solution-standards-list/script.ps1" `
+                -DurationMs $duration `
+                -Host (Get-McpHost)
         }
         
         $domain = if ($Arguments['domain']) { $Arguments['domain'] } else { 'all' }
@@ -86,13 +107,33 @@ function Invoke-SolutionStandardsList {
             $domainCount[$fileDomain]++
         }
         
-        return @{
+        # Build result data
+        $result = @{
             standards = $standards | Sort-Object domain, title
             summary = @{
                 total = $standards.Count
                 by_domain = $domainCount
             }
         }
+        
+        # Build summary
+        $totalCount = $standards.Count
+        $domainCount = $domainCount.Count
+        $globalCount = if ($domainCount['global']) { $domainCount['global'] } else { 0 }
+        $backendCount = if ($domainCount['backend']) { $domainCount['backend'] } else { 0 }
+        $frontendCount = if ($domainCount['frontend']) { $domainCount['frontend'] } else { 0 }
+        $summary = "Found $totalCount standards across $domainCount domains (global: $globalCount, backend: $backendCount, frontend: $frontendCount)."
+        
+        # Build envelope
+        $duration = Get-ToolDuration -Stopwatch $timer
+        return New-EnvelopeResponse `
+            -Tool "solution.standards.list" `
+            -Version "1.0.0" `
+            -Summary $summary `
+            -Data $result `
+            -Source ".bot/mcp/tools/solution-standards-list/script.ps1" `
+            -DurationMs $duration `
+            -Host (Get-McpHost)
     }
     finally {
         Remove-Module solution-helpers -ErrorAction SilentlyContinue

@@ -7,11 +7,23 @@ function Invoke-SolutionInfo {
     $helpersPath = Join-Path $PSScriptRoot '..\..\solution-helpers.psm1'
     Import-Module $helpersPath -Force -DisableNameChecking
     
+    # Start timer
+    $timer = Start-ToolTimer
+    
     try {
         # Find solution root
         $solutionRoot = Find-SolutionRoot
         if (-not $solutionRoot) {
-            throw "Not in a dotbot solution directory (no .bot folder found)"
+            $duration = Get-ToolDuration -Stopwatch $timer
+            return New-EnvelopeResponse `
+                -Tool "solution.info" `
+                -Version "1.0.0" `
+                -Summary "Failed to retrieve solution info: not in a dotbot directory." `
+                -Data @{} `
+                -Errors @((New-ErrorObject -Code "DOTBOT_NOT_FOUND" -Message "Not in a dotbot solution directory (no .bot folder found)")) `
+                -Source ".bot/mcp/tools/solution-info/script.ps1" `
+                -DurationMs $duration `
+                -Host (Get-McpHost)
         }
         
         # Get dotbot state
@@ -106,7 +118,35 @@ function Invoke-SolutionInfo {
             }
         }
         
-        return $result
+        # Build summary
+        $solutionName = Split-Path $solutionRoot -Leaf
+        $profile = $state.profile
+        $version = $state.version
+        $hasMission = $result.ContainsKey('mission')
+        $missionText = if ($hasMission) { "with product mission defined" } else { "(no mission)" }
+        $summary = "$solutionName solution (dotbot $version, $profile profile) $missionText."
+        
+        # Build intent suggestion
+        $intent = $null
+        if ($includeRoadmap -and $result.ContainsKey('roadmap') -and $result.roadmap.phases.Count -gt 0) {
+            $intent = @{
+                recommended_next = "solution.structure"
+                reason = "Roadmap loaded. View solution structure to see projects aligned with roadmap phases."
+                parameters = @{}
+            }
+        }
+        
+        # Build envelope
+        $duration = Get-ToolDuration -Stopwatch $timer
+        return New-EnvelopeResponse `
+            -Tool "solution.info" `
+            -Version "1.0.0" `
+            -Summary $summary `
+            -Data $result `
+            -Intent $intent `
+            -Source ".bot/mcp/tools/solution-info/script.ps1" `
+            -DurationMs $duration `
+            -Host (Get-McpHost)
     }
     finally {
         Remove-Module solution-helpers -ErrorAction SilentlyContinue
