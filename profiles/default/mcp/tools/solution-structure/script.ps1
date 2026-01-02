@@ -7,11 +7,23 @@ function Invoke-SolutionStructure {
     $helpersPath = Join-Path $PSScriptRoot '..\..\solution-helpers.psm1'
     Import-Module $helpersPath -Force -DisableNameChecking
     
+    # Start timer
+    $timer = Start-ToolTimer
+    
     try {
         # Find solution root
         $solutionRoot = Find-SolutionRoot
         if (-not $solutionRoot) {
-            throw "Not in a dotbot solution directory (no .bot folder found)"
+            $duration = Get-ToolDuration -Stopwatch $timer
+            return New-EnvelopeResponse `
+                -Tool "solution.structure" `
+                -Version "1.0.0" `
+                -Summary "Failed to discover solution structure: not in a dotbot directory." `
+                -Data @{} `
+                -Errors @((New-ErrorObject -Code "DOTBOT_NOT_FOUND" -Message "Not in a dotbot solution directory (no .bot folder found)")) `
+                -Source ".bot/mcp/tools/solution-structure/script.ps1" `
+                -DurationMs $duration `
+                -Host (Get-McpHost)
         }
         
         # Discover projects
@@ -106,25 +118,64 @@ function Invoke-SolutionStructure {
             Where-Object { $_.DirectoryName -eq $solutionRoot } |
             Select-Object -ExpandProperty Name
         
-        # Build result
-        $result = @{
+        # Determine discovery mode
+        $registryPath = Join-Path $solutionRoot '.bot\solution\projects.json'
+        $discoveryMode = if ($registry.projects.Count -gt 0) { "hybrid" } else { "auto" }
+        
+        # Count project types for summary
+        $dotnetCount = ($enrichedProjects | Where-Object { $_.type -like 'dotnet-*' }).Count
+        $nextjsCount = ($enrichedProjects | Where-Object { $_.type -eq 'nextjs-app' }).Count
+        $reactCount = ($enrichedProjects | Where-Object { $_.type -eq 'react-app' }).Count
+        $testCount = ($enrichedProjects | Where-Object { $_.type -match 'test' }).Count
+        
+        $summary = "Found $($enrichedProjects.Count) projects ($dotnetCount dotnet, $nextjsCount nextjs, $testCount test) with $discoveryMode discovery."
+        
+        # Build data
+        $data = @{
             solution_root = $solutionRoot
             solution_name = Split-Path $solutionRoot -Leaf
             projects = $enrichedProjects
             key_directories = $keyDirs
             solution_files = @($slnFiles)
-        }
-        
-        # Add file references for registry if it exists
-        $registryPath = Join-Path $solutionRoot '.bot\solution\projects.json'
-        if (Test-Path $registryPath) {
-            $result.file_references = @{
-                primary_files = @('.bot\solution\projects.json')
+            discovery_mode = $discoveryMode
+            discovery_sources = @{
+                filesystem = $discoveredProjects.Count
+                registry = $registry.projects.Count
+                inferred = ($discoveredProjects.Count - $registry.projects.Count)
+            }
+            file_references = @{
+                primary_files = @()
                 referenced_files = @()
             }
         }
         
-        return $result
+        if (Test-Path $registryPath) {
+            $data.file_references.primary_files += '.bot\solution\projects.json'
+        }
+        
+        # Build intent suggestion if no registry
+        $intent = $null
+        if (-not (Test-Path $registryPath) -and $enrichedProjects.Count -gt 0) {
+            $intent = @{
+                recommended_next = "solution.project.register"
+                reason = "No registry found. Register projects with custom aliases and metadata."
+                parameters = @{
+                    project_name = $enrichedProjects[0].name
+                }
+            }
+        }
+        
+        # Build envelope
+        $duration = Get-ToolDuration -Stopwatch $timer
+        return New-EnvelopeResponse `
+            -Tool "solution.structure" `
+            -Version "1.0.0" `
+            -Summary $summary `
+            -Data $data `
+            -Intent $intent `
+            -Source ".bot/mcp/tools/solution-structure/script.ps1" `
+            -DurationMs $duration `
+            -Host (Get-McpHost)
     }
     finally {
         Remove-Module solution-helpers -ErrorAction SilentlyContinue

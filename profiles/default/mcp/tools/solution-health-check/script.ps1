@@ -7,11 +7,23 @@ function Invoke-SolutionHealthCheck {
     $helpersPath = Join-Path $PSScriptRoot '..\..\solution-helpers.psm1'
     Import-Module $helpersPath -Force -DisableNameChecking
     
+    # Start timer
+    $timer = Start-ToolTimer
+    
     try {
         # Find solution root
         $solutionRoot = Find-SolutionRoot
         if (-not $solutionRoot) {
-            throw "Not in a dotbot solution directory (no .bot folder found)"
+            $duration = Get-ToolDuration -Stopwatch $timer
+            return New-EnvelopeResponse `
+                -Tool "solution.health.check" `
+                -Version "1.0.0" `
+                -Summary "Health check failed: not in a dotbot solution directory." `
+                -Data @{} `
+                -Errors @((New-ErrorObject -Code "DOTBOT_NOT_FOUND" -Message "Not in a dotbot solution directory (no .bot folder found)")) `
+                -Source ".bot/mcp/tools/solution-health-check/script.ps1" `
+                -DurationMs $duration `
+                -Host (Get-McpHost)
         }
         
         $checkLevel = if ($Arguments['check_level']) { $Arguments['check_level'] } else { 'standard' }
@@ -60,9 +72,10 @@ function Invoke-SolutionHealthCheck {
         }
         
         $checks += @{
-            category = 'dotbot-installation'
+            id = 'dotbot-installation'
+            label = 'Dotbot Installation'
             status = if ($basicChecks | Where-Object { $_.status -eq 'error' }) { 'error' } elseif ($basicChecks | Where-Object { $_.status -eq 'warning' }) { 'warning' } else { 'pass' }
-            checks = $basicChecks
+            items = $basicChecks
         }
         
         # Standard checks (product artifacts)
@@ -87,9 +100,10 @@ function Invoke-SolutionHealthCheck {
             }
             
             $checks += @{
-                category = 'product-artifacts'
+                id = 'product-artifacts'
+                label = 'Product Artifacts'
                 status = if ($productChecks | Where-Object { $_.status -ne 'pass' }) { 'warning' } else { 'pass' }
-                checks = $productChecks
+                items = $productChecks
             }
         }
         
@@ -112,9 +126,10 @@ function Invoke-SolutionHealthCheck {
             }
             
             $checks += @{
-                category = 'frontmatter-validation'
+                id = 'frontmatter-validation'
+                label = 'YAML Frontmatter Validation'
                 status = if ($frontmatterChecks | Where-Object { $_.status -eq 'error' }) { 'error' } elseif ($frontmatterChecks | Where-Object { $_.status -eq 'warning' }) { 'warning' } else { 'pass' }
-                checks = $frontmatterChecks
+                items = $frontmatterChecks
             }
             
             # File reference integrity
@@ -128,9 +143,10 @@ function Invoke-SolutionHealthCheck {
             )
             
             $checks += @{
-                category = 'file-reference-integrity'
+                id = 'file-reference-integrity'
+                label = 'File Reference Integrity'
                 status = if ($refIssues.Count -gt 0) { 'error' } else { 'pass' }
-                checks = $refChecks
+                items = $refChecks
             }
             
             if ($refIssues.Count -gt 0) {
@@ -154,9 +170,10 @@ function Invoke-SolutionHealthCheck {
             )
             
             $checks += @{
-                category = 'orphan-files'
+                id = 'orphan-files'
+                label = 'Orphan File Detection'
                 status = if ($orphans.Count -gt 0) { 'warning' } else { 'pass' }
-                checks = $orphanChecks
+                items = $orphanChecks
             }
             
             if ($orphans.Count -gt 0) {
@@ -177,25 +194,49 @@ function Invoke-SolutionHealthCheck {
             }
         }
         
-        # Overall status
-        $overallStatus = 'healthy'
-        if ($checks | Where-Object { $_.status -eq 'error' }) {
-            $overallStatus = 'error'
-        } elseif ($checks | Where-Object { $_.status -eq 'warning' }) {
-            $overallStatus = 'warning'
+        # Convert issues to warnings/errors
+        $warnings = @()
+        $errors = @()
+        
+        foreach ($issue in $issues) {
+            if ($issue.severity -eq 'error') {
+                $errorCode = switch ($issue.category) {
+                    'file-references' { 'BROKEN_FILE_REFERENCE' }
+                    default { 'IO_ERROR' }
+                }
+                $errors += (New-ErrorObject -Code $errorCode -Message $issue.message -Details $issue.details)
+            } else {
+                $warnings += $issue.message
+            }
         }
         
-        $result = @{
-            status = $overallStatus
+        # Build summary
+        $errorCount = $errors.Count
+        $warningCount = $warnings.Count
+        $passCount = ($checks | Where-Object { $_.status -eq 'pass' }).Count
+        $summary = "Health check complete: $errorCount errors, $warningCount warnings, $passCount checks passed."
+        
+        # Build data
+        $data = @{
             checks = $checks
-            issues = $issues
         }
         
         if ($includeRecommendations) {
-            $result.recommendations = $recommendations
+            $data.recommendations = $recommendations
         }
         
-        return $result
+        # Build envelope
+        $duration = Get-ToolDuration -Stopwatch $timer
+        return New-EnvelopeResponse `
+            -Tool "solution.health.check" `
+            -Version "1.0.0" `
+            -Summary $summary `
+            -Data $data `
+            -Warnings $warnings `
+            -Errors $errors `
+            -Source ".bot/mcp/tools/solution-health-check/script.ps1" `
+            -DurationMs $duration `
+            -Host (Get-McpHost)
     }
     finally {
         Remove-Module solution-helpers -ErrorAction SilentlyContinue
