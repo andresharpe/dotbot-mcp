@@ -4,8 +4,10 @@ function Invoke-SolutionHealthCheck {
     )
     
     # Import helpers
-    $helpersPath = Join-Path $PSScriptRoot '..\..\solution-helpers.psm1'
-    Import-Module $helpersPath -Force -DisableNameChecking
+    $coreHelpersPath = Join-Path $PSScriptRoot '..\..\core-helpers.psm1'
+    $solutionHelpersPath = Join-Path $PSScriptRoot '..\..\solution-helpers.psm1'
+    Import-Module $coreHelpersPath -Force -DisableNameChecking
+    Import-Module $solutionHelpersPath -Force -DisableNameChecking
     
     # Start timer
     $timer = Start-ToolTimer
@@ -239,7 +241,9 @@ function Invoke-SolutionHealthCheck {
             -Host (Get-McpHost)
     }
     finally {
+        Remove-Module core-helpers -ErrorAction SilentlyContinue
         Remove-Module solution-helpers -ErrorAction SilentlyContinue
     }
 }
+
 

@@ -1,0 +1,46 @@
+name: state_reset
+description: Reset state with confirmation gate (all, feature, phase, task scopes)
+version: 1.0.0
+category: state-management
+
+input_schema:
+  type: object
+  properties:
+    scope:
+      type: string
+      enum: [all, feature, phase, task]
+      description: What to reset (all=full state, feature=current_feature, phase=phase+task, task=current_task_id only)
+    
+    confirm:
+      type: boolean
+      description: Must be true to execute reset. If false, returns warning without mutation.
+    
+    reason:
+      type: string
+      description: Required when confirm=true. Explanation for reset.
+    
+    correlation_id:
+      type: string
+      description: Optional correlation ID for orchestration chains
+  
+  required:
+    - scope
+    - confirm
+
+examples:
+  - description: Reset task only (with confirmation)
+    input:
+      scope: task
+      confirm: true
+      reason: Task completed, clearing for next
+  
+  - description: Preview phase reset (no confirmation)
+    input:
+      scope: phase
+      confirm: false
+  
+  - description: Full state reset (with confirmation)
+    input:
+      scope: all
+      confirm: true
+      reason: Starting fresh feature development

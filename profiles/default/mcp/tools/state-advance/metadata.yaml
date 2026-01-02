@@ -1,0 +1,50 @@
+name: state_advance
+description: Advance to next task or phase (deterministic only, no inference)
+version: 1.0.0
+category: state-management
+
+input_schema:
+  type: object
+  properties:
+    target:
+      type: string
+      enum: [next-task, next-phase]
+      description: What to advance (next-task or next-phase)
+    
+    next_task_id:
+      type: string
+      description: Required when target=next-task. The next task ID to advance to.
+    
+    next_phase:
+      type: string
+      enum: [spec, tasks, implement, verify, deploy]
+      description: Optional when target=next-phase. If omitted, uses phase-order.json.
+    
+    correlation_id:
+      type: string
+      description: Optional correlation ID for orchestration chains
+    
+    reason:
+      type: string
+      description: Optional reason for advancement
+  
+  required:
+    - target
+
+examples:
+  - description: Advance to next task
+    input:
+      target: next-task
+      next_task_id: FEATURE-002
+      reason: Completed task FEATURE-001
+  
+  - description: Advance to next phase (explicit)
+    input:
+      target: next-phase
+      next_phase: implement
+      reason: Specification complete
+  
+  - description: Advance to next phase (from phase-order.json)
+    input:
+      target: next-phase
+      reason: Tasks defined

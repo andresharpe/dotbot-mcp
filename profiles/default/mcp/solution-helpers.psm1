@@ -67,7 +67,7 @@ function Discover-SolutionProjects {
             $projects += $project
         }
         catch {
-            Write-Warning "Failed to parse $($csproj.FullName): $_"
+            # Silently skip invalid project files (MCP tools must not write to stdout)
         }
     }
     
@@ -104,7 +104,7 @@ function Discover-SolutionProjects {
             $projects += $project
         }
         catch {
-            Write-Warning "Failed to parse $($packageJson.FullName): $_"
+            # Silently skip invalid package.json files (MCP tools must not write to stdout)
         }
     }
     
@@ -336,7 +336,7 @@ function Get-ProjectRegistry {
         return $content
     }
     catch {
-        Write-Warning "Failed to parse registry: $_"
+        # Silently return empty registry if parse fails (MCP tools must not write to stdout)
         return @{
             registry_version = '1.0'
             last_updated = $null
@@ -784,7 +784,7 @@ function Parse-ArtifactFrontmatter {
             return $frontmatter
         }
         catch {
-            Write-Warning "Failed to parse YAML frontmatter in ${FilePath}: $_"
+            # Silently return null if YAML parse fails (MCP tools must not write to stdout)
             return $null
         }
     }
@@ -888,8 +888,17 @@ $script:SolutionErrorCodes = @{
 
 #endregion
 
-# Export functions
+# Export functions (including re-exported core-helpers functions)
 Export-ModuleMember -Function @(
+    # Core functions (from core-helpers.psm1)
+    'Find-SolutionRoot',
+    'New-ErrorObject',
+    'Start-ToolTimer',
+    'Get-ToolDuration',
+    'Get-McpHost',
+    'New-EnvelopeResponse',
+    'Assert-EnvelopeSchema',
+    # Solution-specific functions
     'Get-DotbotState',
     'Discover-SolutionProjects',
     'Infer-ProjectMetadata',
@@ -910,4 +919,4 @@ Export-ModuleMember -Function @(
 )
 
 # Export error codes
-Export-ModuleMember -Variable @('SolutionErrorCodes')
+Export-ModuleMember -Variable @('SolutionErrorCodes', 'CoreErrorCodes')
